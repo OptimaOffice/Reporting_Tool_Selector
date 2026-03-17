@@ -1,0 +1,865 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Reporting Tool Selector — Optima Office</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Nunito+Sans:wght@300;400;600;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    /* Optima primary palette */
+    --admiral:   #084975;
+    --caspian:   #00A4C7;
+    --teal:      #009490;
+    --ocean:     #007DB6;
+    /* Optima secondary */
+    --sand:      #E2DDCB;
+    --sand-light:#F0EDE3;
+    --gray-stone:#58595B;
+    --silver:    #A7A9AC;
+    --sunset:    #F8971D;
+    /* Surfaces */
+    --page-bg:   #F5F2EB;
+    --white:     #FFFFFF;
+    --rule:      #D8D4C8;
+    --rule-soft: #E8E4DA;
+    /* Text */
+    --ink:       #1C2B38;
+    --ink-2:     #3D4F5C;
+    --ink-3:     #7A8A94;
+    /* Tool accent colors — each tool gets one Optima color */
+    --qbo-bg:    #E0F4F8; --qbo-border: #00A4C7; --qbo-text: #084975;
+    --oi-bg:     #FEF0DC; --oi-border:  #F8971D; --oi-text:  #7A3800;
+    --fth-bg:    #E0F0EE; --fth-border: #009490; --fth-text: #004744;
+    --jce-bg:    #E0EDF6; --jce-border: #007DB6; --jce-text: #003D5C;
+    --jcfo-bg:   #E0EAF2; --jcfo-border:#084975; --jcfo-text:#042439;
+  }
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: 'Nunito Sans', sans-serif; background: var(--page-bg); color: var(--ink); min-height: 100vh; }
+
+  /* ── Header ── */
+  header {
+    background: var(--white);
+    padding: 0 2rem;
+    height: 68px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    border-bottom: 1px solid var(--rule-soft);
+  }
+  .logo-wrap img { height: 40px; display: block; }
+  .logo-fallback { font-family: 'Nunito Sans', sans-serif; font-size: 18px; font-weight: 700; color: var(--admiral); letter-spacing: 0.02em; }
+  .header-label {
+    font-size: 11px;
+    font-weight: 700;
+    color: var(--ink-3);
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+  }
+
+  /* ── Header stripe ── */
+  .header-stripe {
+    height: 6px;
+    background: linear-gradient(90deg, var(--admiral) 0%, var(--ocean) 35%, var(--caspian) 65%, var(--teal) 100%);
+  }
+
+  /* ── Main layout ── */
+  main { max-width: 700px; margin: 0 auto; padding: 2.5rem 1.5rem 4rem; }
+
+  /* ── Intro ── */
+  .intro { margin-bottom: 2.5rem; }
+  .intro-eyebrow { font-size: 11px; font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase; color: var(--caspian); margin-bottom: 0.5rem; }
+  .intro h1 { font-size: 26px; font-weight: 700; color: var(--admiral); line-height: 1.25; margin-bottom: 0.75rem; }
+  .intro p { font-size: 14px; color: var(--ink-2); line-height: 1.75; }
+
+  /* ── Progress ── */
+  .progress-wrap { margin-bottom: 1.75rem; display: flex; align-items: center; gap: 12px; }
+  .progress-bar { flex: 1; height: 3px; background: var(--rule); border-radius: 2px; overflow: hidden; }
+  .progress-fill { height: 100%; background: var(--caspian); border-radius: 2px; transition: width 0.4s ease; }
+  .progress-label { font-size: 11px; font-weight: 600; color: var(--ink-3); letter-spacing: 0.05em; white-space: nowrap; }
+
+  /* ── Breadcrumbs ── */
+  .breadcrumbs { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 1.25rem; min-height: 22px; }
+  .crumb { font-size: 11px; color: var(--ink-3); background: var(--white); border: 1px solid var(--rule); border-radius: 20px; padding: 3px 10px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 260px; }
+
+  /* ── Question card ── */
+  .question-card { background: var(--white); border: 1px solid var(--rule-soft); border-radius: 14px; padding: 2rem; animation: fadeUp 0.22s ease both; box-shadow: 0 1px 4px rgba(8,73,117,0.06); }
+  @keyframes fadeUp { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+  .step-number { font-size: 11px; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; color: var(--caspian); margin-bottom: 0.6rem; }
+  .question-text { font-size: 19px; font-weight: 700; line-height: 1.4; color: var(--admiral); margin-bottom: 0.65rem; }
+  .question-context {
+    font-size: 13.5px;
+    font-weight: 400;
+    color: var(--ink-2);
+    line-height: 1.75;
+    margin-bottom: 1.5rem;
+    padding: 0.875rem 1rem 0.875rem 1rem;
+    padding-bottom: 1.5rem;
+    border-bottom: 1px solid var(--rule-soft);
+    background: var(--sand-light);
+    border-radius: 8px;
+    border-left: 3px solid var(--caspian);
+    padding-left: 1rem;
+  }
+
+  /* ── Choices ── */
+  .choices { display: flex; flex-direction: column; gap: 8px; margin-bottom: 1.5rem; }
+  .choice-btn {
+    display: flex; align-items: flex-start; gap: 12px;
+    background: var(--sand-light); border: 1.5px solid var(--rule);
+    border-radius: 10px; padding: 13px 16px;
+    font-family: 'Nunito Sans', sans-serif; font-size: 14px; font-weight: 600; color: var(--ink);
+    cursor: pointer; text-align: left; line-height: 1.5;
+    transition: border-color 0.15s, background 0.15s;
+    width: 100%;
+  }
+  .choice-btn:hover { border-color: var(--caspian); background: var(--qbo-bg); color: var(--admiral); }
+  .choice-btn:active { transform: scale(0.997); }
+  .choice-dot { width: 18px; height: 18px; border-radius: 50%; border: 2px solid var(--rule); flex-shrink: 0; margin-top: 2px; transition: border-color 0.15s, background 0.15s; }
+  .choice-btn:hover .choice-dot { border-color: var(--caspian); background: var(--caspian); }
+
+  /* ── Card footer ── */
+  .card-footer { display: flex; align-items: center; justify-content: space-between; padding-top: 1rem; border-top: 1px solid var(--rule-soft); }
+  .back-btn { background: none; border: none; font-family: 'Nunito Sans', sans-serif; font-size: 13px; font-weight: 600; color: var(--ink-3); cursor: pointer; padding: 4px 0; display: flex; align-items: center; gap: 5px; }
+  .back-btn:hover { color: var(--admiral); }
+  .back-btn:disabled { opacity: 0; pointer-events: none; }
+  .restart-btn { background: none; border: 1.5px solid var(--rule); border-radius: 8px; font-family: 'Nunito Sans', sans-serif; font-size: 12px; font-weight: 600; color: var(--ink-3); cursor: pointer; padding: 6px 14px; }
+  .restart-btn:hover { color: var(--admiral); border-color: var(--ocean); }
+
+  /* ── Result ── */
+  .result-wrap { animation: fadeUp 0.28s ease both; }
+  .result-header { margin-bottom: 1.5rem; }
+  .result-eyebrow { font-size: 11px; font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase; color: var(--caspian); margin-bottom: 0.4rem; }
+  .result-title { font-size: 25px; font-weight: 700; color: var(--admiral); line-height: 1.2; }
+
+  .result-card { border-radius: 14px; padding: 1.75rem; margin-bottom: 1rem; border-width: 2px; border-style: solid; box-shadow: 0 1px 6px rgba(0,0,0,0.06); }
+  .tool-badge { display: inline-block; font-size: 11px; font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase; padding: 4px 12px; border-radius: 20px; margin-bottom: 0.875rem; border-width: 1.5px; border-style: solid; }
+  .tool-best-for { font-size: 10px; font-weight: 700; letter-spacing: 0.09em; text-transform: uppercase; opacity: 0.65; margin-bottom: 0.25rem; }
+  .tool-name { font-size: 21px; font-weight: 700; margin-bottom: 0.5rem; }
+  .tool-tagline { font-size: 13px; line-height: 1.7; margin-bottom: 1.1rem; padding: 0.75rem 1rem; border-radius: 8px; background: rgba(0,0,0,0.05); }
+  .tool-bullets { list-style: none; margin-bottom: 1.1rem; }
+  .tool-bullets li { font-size: 13px; line-height: 1.7; padding: 0.3rem 0 0.3rem 1.2rem; position: relative; border-top: 1px solid rgba(0,0,0,0.07); }
+  .tool-bullets li:first-child { border-top: none; }
+  .tool-bullets li::before { content: ""; position: absolute; left: 0; top: 50%; transform: translateY(-50%); width: 5px; height: 5px; border-radius: 50%; background: currentColor; opacity: 0.45; }
+  .tool-ceiling { font-size: 12px; line-height: 1.65; padding: 0.75rem 1rem; border-radius: 8px; background: rgba(0,0,0,0.05); }
+  .tool-ceiling strong { font-weight: 700; display: block; margin-bottom: 3px; font-size: 10px; letter-spacing: 0.07em; text-transform: uppercase; opacity: 0.75; }
+
+  /* ── Pricing grid (3 cells) ── */
+  .pricing-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; margin-bottom: 1rem; }
+  .pricing-cell { background: var(--white); border: 1.5px solid var(--rule-soft); border-radius: 10px; padding: 0.875rem 1rem; }
+  .pricing-cell .label { font-size: 10px; font-weight: 700; letter-spacing: 0.07em; text-transform: uppercase; color: var(--ink-3); margin-bottom: 5px; }
+  .pricing-cell .value { font-size: 14px; font-weight: 700; color: var(--admiral); }
+  .pricing-cell .value.note { font-size: 12px; font-weight: 400; color: var(--ink-2); }
+
+  /* ── Info cards ── */
+  .info-card { background: var(--white); border: 1.5px solid var(--rule-soft); border-radius: 12px; padding: 1.1rem 1.4rem; margin-bottom: 1rem; }
+  .info-label { font-size: 10px; font-weight: 700; letter-spacing: 0.09em; text-transform: uppercase; color: var(--ink-3); margin-bottom: 0.45rem; }
+  .info-text { font-size: 13px; color: var(--ink-2); line-height: 1.7; }
+
+  /* ── Next steps card ── */
+  .next-steps-card {
+    background: var(--admiral);
+    border-radius: 12px;
+    padding: 1.25rem 1.4rem;
+    margin-bottom: 1rem;
+  }
+  .next-steps-card .info-label { color: rgba(255,255,255,0.6); }
+  .next-steps-card .info-text { color: var(--white); }
+  .next-steps-card a { color: var(--caspian); font-weight: 700; text-decoration: none; }
+  .next-steps-card a:hover { text-decoration: underline; }
+
+  /* ── Actions ── */
+  .result-actions { display: flex; gap: 10px; flex-wrap: wrap; margin-bottom: 1rem; }
+  .action-btn { background: var(--caspian); border: none; border-radius: 10px; padding: 11px 20px; font-family: 'Nunito Sans', sans-serif; font-size: 13px; font-weight: 700; color: var(--white); cursor: pointer; transition: background 0.15s; letter-spacing: 0.01em; }
+  .action-btn:hover { background: var(--ocean); }
+  .action-btn-ghost { background: transparent; border: 1.5px solid var(--rule); border-radius: 10px; padding: 11px 20px; font-family: 'Nunito Sans', sans-serif; font-size: 13px; font-weight: 600; color: var(--ink-2); cursor: pointer; transition: border-color 0.15s; }
+  .action-btn-ghost:hover { border-color: var(--caspian); color: var(--admiral); }
+
+  /* ── All-tools table ── */
+  .all-tools { background: var(--white); border: 1.5px solid var(--rule-soft); border-radius: 12px; overflow: hidden; }
+  .all-tools-header { padding: 0.875rem 1.4rem; border-bottom: 1px solid var(--rule-soft); font-size: 10px; font-weight: 700; letter-spacing: 0.09em; text-transform: uppercase; color: var(--ink-3); background: var(--sand-light); }
+  .tool-row { display: flex; align-items: center; gap: 12px; padding: 0.8rem 1.4rem; border-bottom: 1px solid var(--rule-soft); }
+  .tool-row:last-child { border-bottom: none; }
+  .tool-row.highlighted { background: #EAF6F8; }
+  .tool-dot-sm { width: 10px; height: 10px; border-radius: 50%; flex-shrink: 0; }
+  .tool-row-name { font-size: 13px; font-weight: 700; color: var(--admiral); flex: 1; }
+  .tool-row-cost { font-size: 12px; color: var(--ink-3); white-space: nowrap; padding-left: 6px; }
+  .tool-row-fit { font-size: 12px; color: var(--ink-3); text-align: right; max-width: 200px; }
+  .match-pill { font-size: 10px; font-weight: 700; padding: 2px 9px; border-radius: 20px; background: var(--teal); color: var(--white); margin-left: 8px; letter-spacing: 0.04em; text-transform: uppercase; }
+
+  /* ── Footer ── */
+  .page-footer { margin-top: 3rem; padding-top: 1.5rem; border-top: 1px solid var(--rule); text-align: center; font-size: 11px; color: var(--ink-3); }
+
+  @media (max-width: 520px) {
+    main { padding: 1.75rem 1rem 3rem; }
+    .intro h1 { font-size: 21px; }
+    .question-card { padding: 1.4rem; }
+    .pricing-grid { grid-template-columns: 1fr 1fr; }
+    .tool-row-fit { display: none; }
+    header { padding: 0 1rem; }
+    .logo-wrap img { height: 28px; }
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="logo-wrap">
+    <img src="https://optimaoffice.com/wp-content/uploads/2025/05/OptimaOffice_for-awards-and-printing-with-tagline.png"
+         alt="Optima Office"
+         onerror="this.style.display='none';document.getElementById('logo-fb').style.display='block'">
+    <span class="logo-fallback" id="logo-fb" style="display:none">Optima Office</span>
+  </div>
+  <div class="header-label">Reporting Tool Selector</div>
+</header>
+<div class="header-stripe"></div>
+
+<main>
+  <div class="intro" id="intro-block">
+    <h1>Which reporting tool fits this client?</h1>
+    <p>Answer questions about the engagement — accounting platform, integrations needed, service scope, and budget — to get a clear tool recommendation with pricing, rationale, and next steps.</p>
+  </div>
+  <div id="app"></div>
+
+  <div class="page-footer">
+    Optima Office &nbsp;·&nbsp; Internal use only &nbsp;·&nbsp; Questions? <a href="mailto:SoftwareSupport@optimaoffice.com" style="color:var(--caspian);text-decoration:none;font-weight:600">SoftwareSupport@optimaoffice.com</a>
+  </div>
+</main>
+
+<script>
+/* ─── Brand dots for each tool ─────────────────────────────────────────── */
+const DOT = { qbo:"#00A4C7", oi:"#F8971D", fathom:"#009490", jce:"#007DB6", jcfo:"#084975" };
+
+/* ─── Tool definitions ─────────────────────────────────────────────────── */
+const TOOLS = {
+  qbo: {
+    key:"qbo", name:"QBO Advanced — Management Reports",
+    bestFor:"Clients already paying for QBO Advanced who want to maximize what they have",
+    bg:"var(--qbo-bg)", border:"var(--qbo-border)", text:"var(--qbo-text)",
+    badge:"Zero additional cost", badgeBg:"var(--qbo-bg)", badgeBorder:"var(--qbo-border)", badgeText:"var(--qbo-text)",
+    tagline:"The right call when QBO Advanced is already active and the client's budget is limited. Finance Agent, saved report templates, custom KPI dashboards, and scheduled delivery are all included in what the client already pays for.",
+    bullets:[
+      "Finance Agent generates AI-driven monthly performance summaries automatically on the 5th",
+      "Saved custom report templates and scheduled email delivery — set up once, runs monthly",
+      "Custom KPI dashboards, cash flow trend charts, and revenue stream breakdowns built in",
+      "Spreadsheet Sync pushes QBO data to Excel for consolidated multi-company reporting",
+      "Full transaction drill-through — every number traces directly to a journal entry",
+      "Push-to-publish delivery — the controller controls exactly when the client sees the report"
+    ],
+    ceiling:"No self-service client portal (live access requires a paid QBO seat). Reports carry QBO/Intuit formatting. Finance Agent forecasts are AI-generated trend projections, not driver-based models — less precise for complex advisory discussions. Only serves clients on QBO.",
+    also:"When the client needs a self-service portal, more polished reporting, or forward-looking planning, this is the signal to evaluate a dedicated reporting or planning tool. Contact SoftwareSupport@optimaoffice.com to reassess.",
+    cost_optima:"Included in QBO subscription",
+    cost_client:"$207/mo (Optima discount)",
+    cost_retail:"$275/mo retail"
+  },
+  oi: {
+    key:"oi", name:"Optima Insights (Power BI)",
+    bestFor:"Clients needing custom external data integrations — CRM, data warehouse, or non-standard sources — combined with polished branded reporting",
+    bg:"var(--oi-bg)", border:"var(--oi-border)", text:"var(--oi-text)",
+    badge:"Optima package — $500/mo", badgeBg:"var(--oi-bg)", badgeBorder:"var(--oi-border)", badgeText:"var(--oi-text)",
+    tagline:"The only tool in this comparison that connects to virtually any data source — CRM, data warehouse, SQL databases, custom APIs, and beyond. Best when the client's reporting needs go beyond what the GL alone can answer, and Optima wants to own the deliverable.",
+    bullets:[
+      "Connects to any data source: CRM (Salesforce, HubSpot), data warehouses (Redshift, BigQuery, Snowflake, SQL), custom APIs, and Excel",
+      "Maximum layout and visualization control — design exactly what each client needs to see",
+      "Fully built and delivered as an Optima product — Optima's package, Optima's name",
+      "Near-zero per-client marginal cost once the master template exists",
+      "Class, location, and department data from QBO flows through automatically",
+      "Push-to-publish model — Optima controls when the client sees updated data"
+    ],
+    ceiling:"Reporting and visualization only — forecasting is not well-supported. Any forward-looking content must be manually maintained in the underlying dataset. Requires Power BI skills (DAX, Power Query) in-house to build and maintain. Client portal requires a Power BI Pro license per user. All upkeep is Optima's responsibility.",
+    also:"When this client needs forward-looking planning or scenario modeling alongside their reporting, run them through this assessment again focusing on their planning needs to determine the right planning tool.",
+    cost_optima:"$500/mo (Optima package)",
+    cost_client:"Billed as Optima advisory service",
+    cost_retail:"~$10/user/mo Power BI Pro (internal)"
+  },
+  fathom: {
+    key:"fathom", name:"Fathom Pro",
+    bestFor:"Clients who want a polished self-service portal and automated monthly report delivery",
+    bg:"var(--fth-bg)", border:"var(--fth-border)", text:"var(--fth-text)",
+    badge:"$50/mo per client", badgeBg:"var(--fth-bg)", badgeBorder:"var(--fth-border)", badgeText:"var(--fth-text)",
+    tagline:"The most accessible reporting tool for non-financial clients. Native connectors to QBO, Xero, MYOB, and Sage. Automated delivery, push-to-publish client portal, and 3-way cash flow forecasting — at $50/mo per client.",
+    bullets:[
+      "Push-to-publish client portal — controller approves before the client sees anything",
+      "Unlimited read-only client access — no per-seat cost for client portal",
+      "Scheduled automated report delivery — configure once, runs every month hands-off",
+      "3-way cash flow forecasting included (P&L, balance sheet, cash flow)",
+      "Native connectors: QBO, Xero, MYOB, Sage Business Cloud, Excel, Google Sheets",
+      "Fastest time-to-first-report of any third-party tool — hours, not weeks"
+    ],
+    ceiling:"No driver-based forecasting or multi-scenario planning. Cash flow forecast is accounting projection-based, not driver-based. No native NetSuite or Sage Intacct connector. No upgrade path to a planning tool within Fathom — clients who outgrow it need a separate platform.",
+    also:"When a client starts asking forward-looking planning questions — budgets, scenarios, or operating plans — run them through this assessment again. Planning needs point toward a different tool tier.",
+    cost_optima:"$50/mo per client",
+    cost_client:"Passed through to client",
+    cost_retail:"$50/mo per client"
+  },
+  jce: {
+    key:"jce", name:"Jirav — Controller Essentials",
+    bestFor:"Clients ready to move beyond reporting into structured budgeting and advisory conversations",
+    bg:"var(--jce-bg)", border:"var(--jce-border)", text:"var(--jce-text)",
+    badge:"$100/mo per client", badgeBg:"var(--jce-bg)", badgeBorder:"var(--jce-border)", badgeText:"var(--jce-text)",
+    tagline:"The right tool when a client is ready to move beyond reporting into structured budgeting. AI auto-forecast, budget vs. actual, KPI dashboards, and push-to-publish client portal — at $100/mo. Seamless upgrade path to CFO Enterprise on the same platform.",
+    bullets:[
+      "AI auto-forecast + budget vs. actual — structured reporting with a planning layer",
+      "1-year forecast horizon, 2 active plans — covers most controller engagements well",
+      "Native GL connectors: QBO, Xero, NetSuite, Sage Intacct, Excel",
+      "Native payroll/HRIS connectors: Gusto, ADP, BambooHR, Paylocity — live workforce data feeds the forecast",
+      "Push-to-publish portal with unlimited read-only client access, scheduled delivery",
+      "Template cloning — build once, deploy to similar clients in hours",
+      "Upgrade to CFO Enterprise at any time — same platform, same GL connections, no migration"
+    ],
+    ceiling:"No custom driver-based models — AI forecast only. Two active plans limits scenario comparison. One-year horizon rules out long-range planning. No bottoms-up departmental budgeting or workforce planning (those require CFO Enterprise).",
+    also:"If this client needs multi-scenario modeling, a 7-year forecast, or a board operating plan, upgrade to Jirav CFO Enterprise — drivers replace the AI forecast on the same platform.",
+    cost_optima:"$100/mo per client",
+    cost_client:"Passed through to client",
+    cost_retail:"Confirm current partner rate with Jirav"
+  },
+  jcfo: {
+    key:"jcfo", name:"Jirav — CFO Enterprise",
+    bestFor:"Clients requiring robust FP&A tools — driver-based models, multi-scenario planning, and board-ready packages",
+    bg:"var(--jcfo-bg)", border:"var(--jcfo-border)", text:"var(--jcfo-text)",
+    badge:"$250/mo per client", badgeBg:"var(--jcfo-bg)", badgeBorder:"var(--jcfo-border)", badgeText:"var(--jcfo-text)",
+    tagline:"Robust FP&A tools for clients who need driver-based financial models, multi-scenario planning, and board-ready packages. 5 active scenarios, 7-year forecasts, bottoms-up departmental budgets, and live payroll/CRM data feeds — every output fully auditable.",
+    bullets:[
+      "Driver-based 3-statement forecasting — every number traces to a named assumption",
+      "5 active scenarios, 7-year horizon — board plans, investor packages, covenant monitoring",
+      "Bottoms-up departmental budgets — department heads input their own plans directly",
+      "Push-to-publish portal — controller approves before client sees any deliverable",
+      "Native payroll/HRIS connectors: Gusto, ADP, BambooHR, Paylocity, UKG Pro",
+      "Native GL connectors: QBO, Xero, NetSuite, Sage Intacct — all with real-time sync"
+    ],
+    ceiling:"Higher cost — $250/mo per client. Steeper learning curve; first driver-based model takes 2–4 weeks for complex clients. Best suited to $2,500+/mo service tiers.",
+    also:"If this client's planning needs evolve further — more entities, longer forecast horizon, or additional data sources — contact SoftwareSupport@optimaoffice.com to discuss options.",
+    cost_optima:"$250/mo per client",
+    cost_client:"Passed through to client",
+    cost_retail:"Confirm current partner rate with Jirav"
+  }
+};
+
+const ALL_TOOLS = [
+  { key:"qbo",    name:"QBO Advanced",                  cost:"Included in QBO",  fit:"Maximize existing QBO investment" },
+  { key:"oi",     name:"Optima Insights (Power BI)",    cost:"$500/mo package",  fit:"Optima-built, full design control" },
+  { key:"fathom", name:"Fathom Pro",                    cost:"$50/mo/client",    fit:"Best self-service client portal" },
+  { key:"jce",    name:"Jirav — Controller Essentials", cost:"$100/mo/client",   fit:"Entry-level planning + reporting" },
+  { key:"jcfo",   name:"Jirav — CFO Enterprise",        cost:"$250/mo/client",   fit:"Robust FP&A tools" },
+];
+
+/* ─── Decision tree ─────────────────────────────────────────────────────── */
+const NODES = {
+
+  // Step 1 — Platform
+  start: {
+    q:"What accounting platform is this client currently on?",
+    context:"This is the first filter — native connectors eliminate manual data steps and shape which tools work well for this engagement.",
+    choices:[
+      { label:"QBO Advanced", next:"qbo_adv_open" },
+      { label:"QBO Plus or Essentials (lower tier)", next:"qbo_lower_upgrade" },
+      { label:"Xero", next:"xero_connectors" },
+      { label:"NetSuite or Sage Intacct (mid-market ERP)", next:"erp_scope" },
+      { label:"QuickBooks Desktop (QBD) or other non-cloud system", next:"qbd_migration" }
+    ]
+  },
+
+  // ── QBO Advanced ──
+  qbo_adv_open: {
+    q:"What is the primary gap in how this client receives their financial reporting today?",
+    context:"QBO Advanced includes Finance Agent, custom dashboards, and scheduled delivery — but these are basic reporting features without a dedicated advisory layer. A third-party tool adds structured reporting, planning capability, or a client portal that QBO alone cannot replicate.",
+    choices:[
+      { label:"The client is actively opposed to any additional tool cost — QBO only", next:"result_qbo" },
+      { label:"They want better reporting and KPI visibility with a client-facing portal", next:"qbo_adv_gap" },
+      { label:"They need structured budgeting, forecasting, or planning", next:"qbo_adv_gap" },
+      { label:"They need to pull in external data (CRM, data warehouse) alongside their financials", next:"qbo_adv_gap" }
+    ]
+  },
+  qbo_adv_gap: {
+    q:"What specific gap does QBO Advanced leave for this client?",
+    context:"QBO Advanced handles reporting, KPI dashboards, AI forecast summaries, and scheduled delivery well. The remaining gaps are a self-service client portal, driver-based planning, and multi-scenario modeling.",
+    choices:[
+      { label:"They want a push-to-publish client portal with a polished visual experience", next:"report_customization" },
+      { label:"They need structured budgeting and a rolling forecast beyond the AI summary", next:"qbo_adv_connectors" },
+      { label:"They need full FP&A — driver models, scenarios, board packages", next:"qbo_adv_cfo_tier" }
+    ]
+  },
+  qbo_adv_connectors: {
+    q:"Does the forecast need to pull in data beyond the GL?",
+    context:"Jirav CE connects natively to payroll and HRIS systems (Gusto, ADP, BambooHR, Paylocity) — making it the right choice when workforce data needs to feed the forecast. CRM or data warehouse needs are better served by Optima Insights.",
+    choices:[
+      { label:"No — QBO GL data is sufficient for the forecast", next:"jce_tier_check" },
+      { label:"Yes — payroll or HRIS data only (Gusto, ADP, BambooHR, Paylocity)", next:"jce_tier_check" },
+      { label:"Yes — CRM, data warehouse, or other external data sources", next:"crm_scope" }
+    ]
+  },
+  qbo_adv_cfo_tier: {
+    q:"What is this client's approximate monthly service tier with Optima?",
+    context:"Jirav CFO Enterprise is $250/mo per client. The service tier helps confirm which Jirav tier fits best.",
+    choices:[
+      { label:"Under $1,000/mo", next:"qbo_adv_cfo_low" },
+      { label:"$1,000 – $2,500/mo", next:"cfo_connectors" },
+      { label:"$2,500 – $5,000/mo", next:"cfo_connectors" },
+      { label:"Over $5,000/mo", next:"cfo_connectors" }
+    ]
+  },
+  qbo_adv_cfo_low: {
+    q:"Is this service level expected to grow, or is it likely to stay under $1,000/mo?",
+    choices:[
+      { label:"Growing — this engagement is expanding toward higher-complexity advisory", next:"cfo_connectors" },
+      { label:"Stable — this is the right scope for this client right now", next:"jce_tier_check" }
+    ]
+  },
+
+  // ── QBO Plus/Essentials ──
+  qbo_lower_upgrade: {
+    q:"What does this client need from a reporting and planning tool?",
+    context:"Clients on QBO Plus or Essentials are strong candidates for a dedicated reporting or planning tool. Upgrading to QBO Advanced is only worth considering if the client is actively opposed to a separate tool and cost — otherwise a purpose-built tool delivers significantly more value.",
+    choices:[
+      { label:"Better reporting — polished dashboards, KPI tracking, client portal", next:"qbo_lower_connectors" },
+      { label:"Planning and forecasting — budgets, actuals, advisory conversations", next:"qbo_lower_connectors" },
+      { label:"Both reporting and planning", next:"qbo_lower_connectors" },
+      { label:"The client is opposed to any separate tool — upgrade QBO Advanced only", next:"result_qbo" }
+    ]
+  },
+  qbo_lower_connectors: {
+    q:"Does this engagement require connectors beyond QuickBooks?",
+    context:"Fathom Pro connects to QBO natively but pulls GL data only. Jirav connects to payroll and HRIS systems for workforce-driven forecasting. CRM or data warehouse needs point to Optima Insights, which can connect to virtually any external data source.",
+    choices:[
+      { label:"No — QBO GL data is sufficient", next:"qbo_lower_scope" },
+      { label:"Yes — payroll or HRIS data only (Gusto, ADP, BambooHR, Paylocity)", next:"qbo_lower_payroll_scope" },
+      { label:"Yes — CRM, data warehouse, or other external data sources", next:"crm_scope" }
+    ]
+  },
+  qbo_lower_payroll_scope: {
+    q:"How complex is the planning work this engagement requires?",
+    context:"Both Jirav CE and CFO Enterprise connect natively to payroll and HRIS. The split is planning depth — CE for structured budgets with AI forecast, CFO Enterprise for driver-based multi-scenario models.",
+    choices:[
+      { label:"Budget vs. actual + rolling forecast — structured but not complex", next:"jce_tier_check" },
+      { label:"Driver-based models, multi-scenario planning, or board packages", next:"cfo_tier_check" }
+    ]
+  },
+  qbo_lower_scope: {
+    q:"What is the primary service this client is paying for?",
+    choices:[
+      { label:"Polished monthly reporting — KPI dashboards and management accounts", next:"qbo_lower_reporting_budget" },
+      { label:"Budgeting, forecasting, and advisory conversations", next:"qbo_lower_planning_depth" },
+      { label:"Both reporting and planning", next:"qbo_lower_planning_depth" }
+    ]
+  },
+  qbo_lower_reporting_budget: {
+    q:"What is the approximate monthly budget available for a reporting tool on this engagement?",
+    context:"Optima Insights is $500/mo as an Optima-packaged service. Fathom Pro is $50/mo per client. QBO Advanced upgrade is ~$117/mo delta.",
+    choices:[
+      { label:"Under $100/mo — keeping tool cost minimal", next:"report_customization" },
+      { label:"$100 – $350/mo", next:"report_customization" },
+      { label:"$350 – $600/mo — open to a higher-value reporting package", next:"result_oi" },
+      { label:"Over $600/mo — cost is not a constraint", next:"result_oi" }
+    ]
+  },
+
+  qbo_lower_planning_depth: {
+    q:"How complex is the planning work this client needs?",
+    choices:[
+      { label:"Budget vs. actual + AI forecast + KPI tracking — structured but not complex", next:"jce_tier_check" },
+      { label:"Multi-scenario modeling, driver-based forecasts, or board/investor packages", next:"cfo_tier_check" },
+      { label:"Starting simple — can grow into more complexity over time", next:"jce_tier_check" }
+    ]
+  },
+
+  // ── Xero ──
+  xero_connectors: {
+    q:"Does this engagement require connectors beyond Xero?",
+    context:"Fathom Pro and Jirav both connect natively to Xero. Jirav extends to payroll and HRIS systems (Gusto, ADP, BambooHR, Paylocity). CRM or data warehouse needs point to Optima Insights.",
+    choices:[
+      { label:"No — Xero GL data is sufficient", next:"xero_scope" },
+      { label:"Yes — payroll or HRIS data only (Gusto, ADP, BambooHR, Paylocity)", next:"xero_payroll_scope" },
+      { label:"Yes — CRM, data warehouse, or other external data sources", next:"crm_scope" }
+    ]
+  },
+  xero_scope: {
+    q:"What is the primary service this Xero client is paying for?",
+    choices:[
+      { label:"Monthly management accounts and KPI reporting", next:"xero_reporting_budget" },
+      { label:"Budgeting, forecasting, and advisory conversations", next:"xero_planning_depth" },
+      { label:"Both reporting and planning", next:"xero_planning_depth" }
+    ]
+  },
+  xero_reporting_budget: {
+    q:"What is the approximate monthly budget for a reporting tool on this engagement?",
+    choices:[
+      { label:"Under $100/mo", next:"report_customization" },
+      { label:"$100 – $350/mo", next:"report_customization" },
+      { label:"$350 – $600/mo", next:"oi_xero_connector_check" },
+      { label:"Over $600/mo", next:"oi_xero_connector_check" }
+    ]
+  },
+  oi_xero_connector_check: {
+    q:"Optima Insights (Power BI) is built primarily for QBO clients. For Xero, data flows via Excel export or a custom connector. Is that workable for this engagement?",
+    context:"If a direct Xero connection without manual steps is important, Fathom Pro connects natively and is the cleaner choice at $50/mo.",
+    choices:[
+      { label:"Yes — Excel export or a custom connector is fine for this client", next:"result_oi" },
+      { label:"No — we need a native Xero connector with no manual steps", next:"report_customization" }
+    ]
+  },
+  xero_payroll_scope: {
+    q:"What level of planning does this client need?",
+    choices:[
+      { label:"Structured budget and rolling forecast — not highly complex", next:"jce_tier_check" },
+      { label:"Driver-based FP&A, multi-scenario planning, or board packages", next:"cfo_tier_check" }
+    ]
+  },
+  xero_planning_depth: {
+    q:"How complex is the planning work?",
+    choices:[
+      { label:"Budget vs. actual + AI forecast + KPI tracking", next:"jce_tier_check" },
+      { label:"Multi-scenario modeling, driver-based forecasts, or board/investor packages", next:"cfo_tier_check" },
+      { label:"Starting simple — can grow later", next:"jce_tier_check" }
+    ]
+  },
+
+  // ── ERP ──
+  erp_scope: {
+    q:"What does this ERP client primarily need?",
+    context:"Jirav connects natively to NetSuite and Sage Intacct. Fathom does not — Excel import is the only workaround. For mid-market ERP clients, the native connector often tips the decision toward Jirav.",
+    choices:[
+      { label:"Reporting and dashboards — structured visibility into performance", next:"erp_connector_check" },
+      { label:"FP&A planning — budgets, forecasts, and scenario modeling", next:"erp_planning_depth" },
+      { label:"Both reporting and planning", next:"erp_planning_depth" }
+    ]
+  },
+  erp_connector_check: {
+    q:"Is a native connector to NetSuite or Sage Intacct required, or is Excel import acceptable?",
+    context:"Fathom accepts Excel imports, adding a manual monthly step. Jirav CE and CFO Enterprise connect directly, eliminating that step entirely.",
+    choices:[
+      { label:"Native connector required — manual imports are not acceptable", next:"erp_native_scope" },
+      { label:"Excel import is acceptable — we can manage a monthly export step", next:"erp_reporting_budget" }
+    ]
+  },
+  erp_native_scope: {
+    q:"What level of service does this ERP client need?",
+    choices:[
+      { label:"Reporting and dashboards — structured visibility, not full FP&A", next:"jce_tier_check" },
+      { label:"FP&A — budgets, forecasts, and scenarios", next:"cfo_tier_check" }
+    ]
+  },
+  erp_reporting_budget: {
+    q:"What is the approximate monthly budget for a reporting tool?",
+    choices:[
+      { label:"Under $350/mo", next:"report_customization" },
+      { label:"$350 – $600/mo", next:"result_oi" },
+      { label:"Over $600/mo", next:"result_oi" }
+    ]
+  },
+  erp_planning_depth: {
+    q:"How complex is the planning work?",
+    choices:[
+      { label:"Structured budget and rolling forecast — not highly complex", next:"jce_tier_check" },
+      { label:"Driver-based FP&A, multi-scenario planning, or board/investor packages", next:"cfo_tier_check" },
+      { label:"Not sure yet — starting with a simpler scope", next:"jce_tier_check" }
+    ]
+  },
+
+  // ── QBD / Desktop ──
+  qbd_migration: {
+    q:"Is this client expected to migrate to QBO, or staying on Desktop long-term?",
+    context:"All tools in this comparison require cloud accounting as their primary data source. Desktop clients use Excel import as a workaround — functional, but adds a manual step every month.",
+    choices:[
+      { label:"Migrating to QBO — let's set up for the cloud environment now", next:"qbo_lower_upgrade" },
+      { label:"Staying on Desktop — Excel import workaround is acceptable", next:"qbd_scope" }
+    ]
+  },
+  qbd_scope: {
+    q:"What is the primary deliverable for this Desktop client?",
+    choices:[
+      { label:"Polished monthly reports and KPI dashboards", next:"qbd_reporting_budget" },
+      { label:"Budgeting, forecasting, and advisory conversations", next:"jce_tier_check" }
+    ]
+  },
+  qbd_reporting_budget: {
+    q:"What is the monthly budget for a reporting tool on this engagement?",
+    choices:[
+      { label:"Under $350/mo", next:"report_customization" },
+      { label:"$350 – $600/mo", next:"result_oi" },
+      { label:"Over $600/mo", next:"result_oi" }
+    ]
+  },
+
+  // ── Shared planning tier checks ──
+  jce_tier_check: {
+    q:"What is this client's approximate monthly service tier with Optima?",
+    context:"Jirav CE is $100/mo per client. This question also helps identify whether the engagement scope may be better served by CFO Enterprise.",
+    choices:[
+      { label:"Under $1,000/mo", next:"jce_multientity" },
+      { label:"$1,000 – $2,500/mo", next:"jce_scope_confirm" },
+      { label:"$2,500 – $5,000/mo", next:"jce_scope_confirm" },
+      { label:"Over $5,000/mo", next:"jce_scope_confirm" }
+    ]
+  },
+  jce_scope_confirm: {
+    q:"At this service level, is the scope purely budgeting and standard reporting — or is there need for driver-based scenario modeling?",
+    context:"At $1,000+/mo, CFO Enterprise ($250/mo) becomes economically viable. If the client is asking for multi-scenario planning or board packages, CFO Enterprise is the better fit.",
+    choices:[
+      { label:"Budget vs. actual and rolling forecast is sufficient — no complex modeling needed", next:"jce_multientity" },
+      { label:"They need or will soon need driver-based scenarios or board packages", next:"cfo_tier_check" }
+    ]
+  },
+  jce_multientity: {
+    q:"Does this client have multiple entities that need consolidated reporting?",
+    context:"Jirav CE supports multi-entity consolidation. Fathom Pro also handles consolidation well — up to 300 entities. If consolidation at scale is the primary driver and planning is secondary, Fathom may be simpler.",
+    choices:[
+      { label:"No — single entity", next:"result_jce" },
+      { label:"Yes — 2 to 5 entities", next:"result_jce" },
+      { label:"Yes — more than 5 entities needing consolidated rollup", next:"jce_multientity_heavy" }
+    ]
+  },
+  jce_multientity_heavy: {
+    q:"Is the primary need consolidated rollup reporting across entities, or FP&A modeling per entity?",
+    context:"Fathom Pro handles large-scale multi-entity consolidation (up to 300 entities) better than Jirav for pure reporting. Jirav is stronger when each entity needs its own driver-based planning model.",
+    choices:[
+      { label:"Primarily consolidated reporting — we need a clean group view", next:"report_customization" },
+      { label:"FP&A modeling per entity, then consolidated — planning drives the requirement", next:"result_jce" }
+    ]
+  },
+
+  cfo_tier_check: {
+    q:"What is this client's approximate monthly service tier with Optima?",
+    context:"Jirav CFO Enterprise is $250/mo per client. This question confirms whether the service scope supports the tool investment.",
+    choices:[
+      { label:"Under $1,000/mo", next:"cfo_tier_low" },
+      { label:"$1,000 – $2,500/mo", next:"cfo_connectors" },
+      { label:"$2,500 – $5,000/mo", next:"cfo_connectors" },
+      { label:"Over $5,000/mo", next:"cfo_connectors" }
+    ]
+  },
+  cfo_tier_low: {
+    q:"Is this service level expected to grow toward $2,500+/mo?",
+    choices:[
+      { label:"Growing — this will likely expand to full CFO scope within 6–12 months", next:"cfo_connectors" },
+      { label:"Stable — this is the right scope for this client for the foreseeable future", next:"jce_multientity" }
+    ]
+  },
+  cfo_connectors: {
+    q:"Does this engagement require payroll or HRIS data to feed into the financial model?",
+    context:"Jirav CFO Enterprise connects natively to Gusto, ADP, BambooHR, Paylocity, and UKG Pro. Live payroll data enables workforce planning and makes headcount-driven forecasts significantly more accurate. If CRM or data warehouse integration is needed, Optima Insights should handle that layer.",
+    choices:[
+      { label:"No — GL data is sufficient for this model", next:"cfo_3stmt" },
+      { label:"Yes — payroll or HRIS data (Gusto, ADP, BambooHR, Paylocity, UKG Pro)", next:"cfo_3stmt" },
+      { label:"Also need CRM or data warehouse data alongside the planning model", next:"crm_plus_planning" }
+    ]
+  },
+  cfo_3stmt: {
+    q:"Does this client require a fully interconnected 3-statement model — P&L, balance sheet, and cash flow all linked?",
+    context:"Bank covenants, investor reporting, and board packages typically require the balance sheet and cash flow to be fully integrated with the P&L. This is a CFO Enterprise core deliverable.",
+    choices:[
+      { label:"Yes — bank covenants, investors, or a board require the full model", next:"result_jcfo" },
+      { label:"Yes — we want to deliver this as part of the engagement scope", next:"result_jcfo" },
+      { label:"No — P&L and cash flow visibility is sufficient for now", next:"jce_multientity" }
+    ]
+  },
+
+  // ── CRM / Data warehouse path — routes to Optima Insights ──────────────
+  crm_scope: {
+    q:"Does this client also need forecasting or forward-looking planning, or is reporting the primary need?",
+    context:"Optima Insights (Power BI) is the only tool in this comparison that connects to CRM systems, data warehouses, and custom data sources. However, it does not support forecasting well — any forward-looking content requires manual maintenance. If planning is also needed, the right approach is Optima Insights for reporting paired with Jirav for planning.",
+    choices:[
+      { label:"Reporting only — pull external data into dashboards and management reports", next:"result_oi" },
+      { label:"Both reporting from external sources AND forward-looking planning or forecasting", next:"crm_plus_planning" }
+    ]
+  },
+
+  crm_plus_planning: {
+    q:"This client needs both external data reporting and forward-looking planning. What level of planning complexity do they need?",
+    context:"Optima Insights will handle the external data and reporting layer. Select the planning complexity below to determine the right Jirav tier for the planning layer. These will be recommended separately — contact SoftwareSupport@optimaoffice.com to coordinate implementation of both.",
+    choices:[
+      { label:"Budget vs. actual + AI forecast — structured planning, not highly complex", next:"result_jce" },
+      { label:"Driver-based models, multi-scenario planning, or board packages", next:"result_jcfo" }
+    ]
+  },
+
+  // ── Report customization gate ─────────────────────────────────────────
+  report_customization: {
+    q:"How important is the ability to customize the layout and content of client-facing reports?",
+    context:"Fathom Pro uses a structured template system — reports are polished and consistent but built within Fathom's fixed design framework. Jirav (both CE and CFO Enterprise) allows full customization of report layouts, sections, narrative blocks, and per-client KPI displays. If custom report design matters for this client, Jirav is the stronger fit even at the reporting tier.",
+    choices:[
+      { label:"Standard templates are fine — polished and consistent is what matters", next:"result_fathom" },
+      { label:"We need to customize report layout, sections, or content per client", next:"report_custom_depth" }
+    ]
+  },
+  report_custom_depth: {
+    q:"Is the customization need for reporting presentation only, or does the client also need budgeting and forecasting?",
+    context:"Jirav CE ($100/mo) supports fully customized reporting outputs alongside structured budgeting and AI-assisted forecasting. Even if the client only needs customized reporting right now, Jirav CE handles both — and the upgrade path to CFO Enterprise is seamless if planning needs grow.",
+    choices:[
+      { label:"Reporting customization only — no budgeting or forecasting needed yet", next:"jce_tier_check" },
+      { label:"Customized reporting plus budgeting and forecasting", next:"jce_tier_check" },
+      { label:"Customized reporting plus full FP&A — driver models and scenarios", next:"cfo_tier_check" }
+    ]
+  },
+
+  // ── Results ────────────────────────────────────────────────────────────
+  result_qbo:    { result:"qbo" },
+  result_oi:     { result:"oi" },
+  result_fathom: { result:"fathom" },
+  result_jce:    { result:"jce" },
+  result_jcfo:   { result:"jcfo" }
+};
+
+/* ─── Engine ──────────────────────────────────────────────────────────── */
+let history = [], crumbs = [];
+const TOTAL = 10;
+
+function node()  { return history.length===0 ? NODES.start : NODES[history[history.length-1]]; }
+function pct()   { return Math.min(94, Math.round(history.length/TOTAL*100)); }
+
+function chev(d) {
+  return d==="left"
+    ? `<svg width="14" height="14" viewBox="0 0 14 14" fill="none" style="vertical-align:-2px"><path d="M9 2L4 7l5 5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>`
+    : `<svg width="14" height="14" viewBox="0 0 14 14" fill="none" style="vertical-align:-2px"><path d="M5 2l5 5-5 5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>`;
+}
+
+function renderResult(key) {
+  const t = TOOLS[key];
+  document.getElementById("intro-block").style.display = "none";
+
+  let h = `<div class="result-wrap">
+    <div class="result-header">
+      <div class="result-eyebrow">Recommendation for this client</div>
+      <div class="result-title">${t.name}</div>
+    </div>
+
+    <div class="result-card" style="background:${t.bg};border-color:${t.border}">
+      <div class="tool-badge" style="background:${t.badgeBg};border-color:${t.badgeBorder};color:${t.badgeText}">${t.badge}</div>
+      <div class="tool-best-for" style="color:${t.text}">Best for</div>
+      <div class="tool-name" style="color:${t.text}">${t.name}</div>
+      <div class="tool-tagline" style="color:${t.text}">${t.tagline}</div>
+      <ul class="tool-bullets" style="color:${t.text}">
+        ${t.bullets.map(b=>`<li>${b}</li>`).join("")}
+      </ul>
+      <div class="tool-ceiling" style="color:${t.text}">
+        <strong>Ceiling to know before committing</strong>${t.ceiling}
+      </div>
+    </div>
+
+    <div class="pricing-grid" style="grid-template-columns:1fr 1fr">
+      <div class="pricing-cell">
+        <div class="label">Tool cost</div>
+        <div class="value">${t.cost_optima}</div>
+      </div>
+      <div class="pricing-cell">
+        <div class="label">Client billing</div>
+        <div class="value note">${t.cost_client}</div>
+      </div>
+    </div>
+
+    <div class="info-card">
+      <div class="info-label">When the client outgrows this</div>
+      <div class="info-text">${t.also}</div>
+    </div>`;
+
+  if (crumbs.length > 0) {
+    h += `<div class="info-card">
+      <div class="info-label">Your assessment answers</div>
+      <div style="display:flex;flex-wrap:wrap;gap:6px;margin-top:0.4rem">
+        ${crumbs.map(c=>`<span class="crumb">${c}</span>`).join("")}
+      </div>
+    </div>`;
+  }
+
+  h += `<div class="next-steps-card">
+    <div class="info-label">Next steps</div>
+    <div class="info-text">
+      To begin implementation or discuss this recommendation further, contact the Optima Software Support team. Include the client name, recommended tool, and any connector or customization requirements identified during this assessment.<br><br>
+      <a href="mailto:SoftwareSupport@optimaoffice.com?subject=Reporting Tool Implementation Request — ${encodeURIComponent(t.name)}&body=Tool recommended: ${encodeURIComponent(t.name)}%0D%0AClient name: %0D%0AConnectors required: %0D%0AAdditional notes: ">
+        Email SoftwareSupport@optimaoffice.com &rarr;
+      </a><br><br>
+      <a href="https://optimaofficecom.sharepoint.com/:x:/s/MasterDocuments/IQA2PQGsMKaFRok51oPt2f17Acxt6NuGDhrhi8mVGwA_7Dg?e=7vE25X" target="_blank">
+        View full platform comparison guide (Excel) &rarr;
+      </a>
+    </div>
+  </div>`;
+
+  h += `<div class="result-actions">
+    <button class="action-btn" onclick="restart()">Assess another client</button>
+    <button class="action-btn-ghost" onclick="toggleAll()">All five tools ${chev("right")}</button>
+  </div>
+  <div id="all-block" style="display:none">
+    <div class="all-tools">
+      <div class="all-tools-header" style="display:grid;grid-template-columns:2fr 120px 1fr;gap:8px;align-items:center">
+        <span>Tool</span><span style="text-align:right">Cost</span><span style="text-align:right">Best for</span>
+      </div>
+      ${ALL_TOOLS.map(tool=>`
+        <div class="tool-row ${tool.key===key?"highlighted":""}" style="display:grid;grid-template-columns:2fr 120px 1fr;gap:8px;align-items:center">
+          <div style="display:flex;align-items:center;gap:10px">
+            <div class="tool-dot-sm" style="background:${DOT[tool.key]};flex-shrink:0"></div>
+            <span class="tool-row-name">${tool.name}${tool.key===key?'<span class="match-pill">recommended</span>':''}</span>
+          </div>
+          <div class="tool-row-cost" style="text-align:right">${tool.cost}</div>
+          <div class="tool-row-fit" style="text-align:right;max-width:none">${tool.fit}</div>
+        </div>`).join("")}
+    </div>
+  </div>
+  </div>`;
+
+  return h;
+}
+
+function toggleAll() {
+  const el = document.getElementById("all-block");
+  if (el) el.style.display = el.style.display === "none" ? "block" : "none";
+}
+
+function renderQuestion(n) {
+  document.getElementById("intro-block").style.display = history.length > 0 ? "none" : "";
+  let h = "";
+
+  if (history.length > 0) {
+    h += `<div class="progress-wrap">
+      <div class="progress-bar"><div class="progress-fill" style="width:${pct()}%"></div></div>
+      <div class="progress-label">${pct()}%</div>
+    </div>`;
+  }
+
+  if (crumbs.length > 0) {
+    h += `<div class="breadcrumbs">${crumbs.map(c=>`<span class="crumb">${c}</span>`).join("")}</div>`;
+  }
+
+  h += `<div class="question-card">`;
+  if (history.length > 0) h += `<div class="step-number">Question ${history.length + 1}</div>`;
+  h += `<div class="question-text">${n.q}</div>`;
+  if (n.context) h += `<div class="question-context">${n.context}</div>`;
+
+  h += `<div class="choices">
+    ${n.choices.map((c,i)=>`<button class="choice-btn" onclick="pick(${i})">
+      <div class="choice-dot"></div><span>${c.label}</span>
+    </button>`).join("")}
+  </div>`;
+
+  h += `<div class="card-footer">
+    <button class="back-btn" onclick="back()" ${history.length===0?"disabled":""}>${chev("left")} Back</button>
+    <button class="restart-btn" onclick="restart()">Start over</button>
+  </div></div>`;
+
+  return h;
+}
+
+function render() {
+  const n = node();
+  document.getElementById("app").innerHTML = n.result ? renderResult(n.result) : renderQuestion(n);
+  window.scrollTo({ top: 0, behavior: "smooth" });
+}
+
+function pick(i) {
+  const c = node().choices[i];
+  crumbs.push(c.label.length > 54 ? c.label.slice(0, 52) + "…" : c.label);
+  history.push(c.next);
+  render();
+}
+
+function back() { if (history.length > 0) { history.pop(); crumbs.pop(); render(); } }
+
+function restart() {
+  history = []; crumbs = [];
+  document.getElementById("intro-block").style.display = "";
+  render();
+}
+
+render();
+</script>
+</body>
+</html>
