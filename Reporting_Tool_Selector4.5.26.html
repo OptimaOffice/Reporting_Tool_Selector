@@ -1,0 +1,643 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Reporting Tool Selector — Optima Office</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Nunito+Sans:wght@300;400;600;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --admiral:#084975; --caspian:#00A4C7; --teal:#009490; --ocean:#007DB6;
+    --sand:#E2DDCB; --sand-light:#F5F2EB; --gray-stone:#58595B;
+    --sunset:#F8971D; --white:#FFFFFF; --page-bg:#F5F2EB;
+    --ink:#1C2B38; --ink-2:#3D4F5C; --ink-3:#7A8A94;
+    --rule:#D8D4C8; --rule-soft:#E8E4DA;
+    --bronze-bg:#fdf8f2; --bronze-border:#7A5C2E; --bronze-text:#5a3f1a;
+    --silver-bg:#f2f4f5;  --silver-border:#58595B; --silver-text:#333;
+    --gold-bg:#fdf8ec;    --gold-border:#8B6914;   --gold-text:#5a3f00;
+    --goldp-bg:#eef3fa;   --goldp-border:#007DB6;  --goldp-text:#003d5c;
+    --plat-bg:#e8f0f8;    --plat-border:#084975;   --plat-text:#042439;
+  }
+  *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+  body{font-family:'Nunito Sans',sans-serif;background:var(--page-bg);color:var(--ink);min-height:100vh}
+
+  header{background:var(--white);border-bottom:1px solid var(--rule-soft);padding:0 2rem;height:68px;display:flex;align-items:center;justify-content:space-between}
+  .logo-wrap img{height:40px;display:block}
+  .logo-fallback{font-size:18px;font-weight:700;color:var(--admiral);display:none}
+  .header-label{font-size:11px;font-weight:700;color:var(--ink-3);letter-spacing:.1em;text-transform:uppercase}
+  .header-stripe{height:6px;background:linear-gradient(90deg,var(--admiral) 0%,var(--ocean) 35%,var(--caspian) 65%,var(--teal) 100%)}
+
+  main{max-width:680px;margin:0 auto;padding:2.5rem 1.5rem 4rem}
+
+  /* ── Tier legend ── */
+  .tier-legend{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:2rem;padding:12px 14px;background:var(--white);border-radius:10px;border:1px solid var(--rule-soft)}
+  .tier-legend-label{font-size:10px;font-weight:700;letter-spacing:.07em;text-transform:uppercase;color:var(--ink-3);width:100%;margin-bottom:4px}
+  .tier-pill{font-size:11px;font-weight:700;padding:3px 10px;border-radius:20px;border:1.5px solid}
+  .tp-bronze{background:var(--bronze-bg);border-color:var(--bronze-border);color:var(--bronze-text)}
+  .tp-silver{background:var(--silver-bg);border-color:var(--silver-border);color:var(--silver-text)}
+  .tp-gold{background:var(--gold-bg);border-color:var(--gold-border);color:var(--gold-text)}
+  .tp-goldp{background:var(--goldp-bg);border-color:var(--goldp-border);color:var(--goldp-text)}
+  .tp-plat{background:var(--plat-bg);border-color:var(--plat-border);color:var(--plat-text)}
+
+  .intro{margin-bottom:2rem}
+  .intro h1{font-size:26px;font-weight:700;color:var(--admiral);line-height:1.25;margin-bottom:.5rem}
+  .intro p{font-size:14px;color:var(--ink-2);line-height:1.7}
+
+  /* ── Progress ── */
+  .progress-wrap{margin-bottom:1.75rem;display:flex;align-items:center;gap:12px}
+  .progress-bar{flex:1;height:3px;background:var(--rule);border-radius:2px;overflow:hidden}
+  .progress-fill{height:100%;background:var(--caspian);border-radius:2px;transition:width .4s ease}
+  .progress-label{font-size:11px;font-weight:600;color:var(--ink-3);letter-spacing:.05em;white-space:nowrap}
+
+  /* ── Breadcrumbs ── */
+  .breadcrumbs{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:1.25rem;min-height:22px}
+  .crumb{font-size:11px;color:var(--ink-3);background:var(--white);border:1px solid var(--rule);border-radius:20px;padding:3px 10px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:260px}
+
+  /* ── Question card ── */
+  .question-card{background:var(--white);border:1.5px solid var(--rule-soft);border-radius:14px;padding:2rem;animation:fadeUp .22s ease both;box-shadow:0 1px 4px rgba(8,73,117,.06)}
+  @keyframes fadeUp{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
+  .step-number{font-size:10px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--caspian);margin-bottom:.5rem}
+  .question-text{font-size:19px;font-weight:700;line-height:1.4;color:var(--admiral);margin-bottom:.6rem}
+  .question-context{font-size:13px;color:var(--ink-2);line-height:1.7;margin-bottom:1.5rem;padding:10px 12px;background:var(--sand-light);border-radius:8px;border-left:3px solid var(--caspian)}
+
+  /* ── Choices ── */
+  .choices{display:flex;flex-direction:column;gap:8px;margin-bottom:1.5rem}
+  .choice-btn{display:flex;align-items:flex-start;gap:12px;background:var(--sand-light);border:1.5px solid var(--rule);border-radius:10px;padding:13px 16px;font-family:'Nunito Sans',sans-serif;font-size:14px;font-weight:600;color:var(--ink);cursor:pointer;text-align:left;line-height:1.5;transition:border-color .15s,background .15s;width:100%}
+  .choice-btn:hover{border-color:var(--caspian);background:#e8f4fa;color:var(--admiral)}
+  .choice-dot{width:18px;height:18px;border-radius:50%;border:2px solid var(--rule);flex-shrink:0;margin-top:2px;transition:border-color .15s,background .15s}
+  .choice-btn:hover .choice-dot{border-color:var(--caspian);background:var(--caspian)}
+  /* Tier indicator on choice */
+  .choice-tier{flex-shrink:0;font-size:10px;font-weight:700;padding:2px 8px;border-radius:20px;margin-left:auto;align-self:center;white-space:nowrap;border:1.5px solid}
+
+  .card-footer{display:flex;align-items:center;justify-content:space-between;padding-top:1rem;border-top:1px solid var(--rule-soft)}
+  .back-btn{background:none;border:none;font-family:'Nunito Sans',sans-serif;font-size:13px;font-weight:600;color:var(--ink-3);cursor:pointer;padding:4px 0;display:flex;align-items:center;gap:5px}
+  .back-btn:hover{color:var(--admiral)}
+  .back-btn:disabled{opacity:0;pointer-events:none}
+  .restart-btn{background:none;border:1.5px solid var(--rule);border-radius:8px;font-family:'Nunito Sans',sans-serif;font-size:12px;font-weight:600;color:var(--ink-3);cursor:pointer;padding:6px 14px}
+  .restart-btn:hover{color:var(--admiral);border-color:var(--ocean)}
+
+  /* ── Result ── */
+  .result-wrap{animation:fadeUp .28s ease both}
+  .result-eyebrow{font-size:11px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--caspian);margin-bottom:.4rem}
+  .result-title{font-size:25px;font-weight:700;color:var(--admiral);line-height:1.2;margin-bottom:1.25rem}
+
+  .result-card{border-radius:14px;padding:1.75rem;margin-bottom:1rem;border-width:2px;border-style:solid;box-shadow:0 1px 6px rgba(0,0,0,.06)}
+  .tool-badge{display:inline-block;font-size:11px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;padding:4px 12px;border-radius:20px;margin-bottom:.875rem;border-width:1.5px;border-style:solid}
+  .tool-best-for{font-size:10px;font-weight:700;letter-spacing:.09em;text-transform:uppercase;opacity:.65;margin-bottom:.2rem}
+  .tool-name{font-size:21px;font-weight:700;margin-bottom:.4rem}
+  .tool-tagline{font-size:13px;line-height:1.7;margin-bottom:1.1rem;padding:.75rem 1rem;border-radius:8px;background:rgba(0,0,0,.05)}
+  .tool-bullets{list-style:none;margin-bottom:1.1rem}
+  .tool-bullets li{font-size:13px;line-height:1.7;padding:.3rem 0 .3rem 1.2rem;position:relative;border-top:1px solid rgba(0,0,0,.07)}
+  .tool-bullets li:first-child{border-top:none}
+  .tool-bullets li::before{content:"";position:absolute;left:0;top:50%;transform:translateY(-50%);width:5px;height:5px;border-radius:50%;background:currentColor;opacity:.45}
+  .tool-ceiling{font-size:12px;line-height:1.65;padding:.75rem 1rem;border-radius:8px;background:rgba(0,0,0,.05)}
+  .tool-ceiling strong{font-weight:700;display:block;margin-bottom:3px;font-size:10px;letter-spacing:.07em;text-transform:uppercase;opacity:.75}
+
+  .pricing-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:1rem}
+  .pricing-cell{background:var(--white);border:1.5px solid var(--rule-soft);border-radius:10px;padding:.875rem 1rem}
+  .pricing-cell .label{font-size:10px;font-weight:700;letter-spacing:.07em;text-transform:uppercase;color:var(--ink-3);margin-bottom:5px}
+  .pricing-cell .value{font-size:14px;font-weight:700;color:var(--admiral)}
+  .pricing-cell .value.note{font-size:12px;font-weight:400;color:var(--ink-2)}
+
+  .info-card{background:var(--white);border:1.5px solid var(--rule-soft);border-radius:12px;padding:1.1rem 1.4rem;margin-bottom:1rem}
+  .info-label{font-size:10px;font-weight:700;letter-spacing:.09em;text-transform:uppercase;color:var(--ink-3);margin-bottom:.4rem}
+  .info-text{font-size:13px;color:var(--ink-2);line-height:1.7}
+
+  .next-steps-card{background:var(--admiral);border-radius:12px;padding:1.25rem 1.4rem;margin-bottom:1rem}
+  .next-steps-card .info-label{color:rgba(255,255,255,.6)}
+  .next-steps-card .info-text{color:var(--white)}
+  .next-steps-card a{color:var(--caspian);font-weight:700;text-decoration:none}
+  .next-steps-card a:hover{text-decoration:underline}
+
+  .result-actions{display:flex;gap:10px;flex-wrap:wrap;margin-bottom:1rem}
+  .action-btn{background:var(--caspian);border:none;border-radius:10px;padding:11px 20px;font-family:'Nunito Sans',sans-serif;font-size:13px;font-weight:700;color:var(--white);cursor:pointer;transition:background .15s}
+  .action-btn:hover{background:var(--ocean)}
+  .action-btn-ghost{background:transparent;border:1.5px solid var(--rule);border-radius:10px;padding:11px 20px;font-family:'Nunito Sans',sans-serif;font-size:13px;font-weight:600;color:var(--ink-2);cursor:pointer;transition:border-color .15s}
+  .action-btn-ghost:hover{border-color:var(--caspian);color:var(--admiral)}
+
+  .all-tools{background:var(--white);border:1.5px solid var(--rule-soft);border-radius:12px;overflow:hidden}
+  .all-tools-header{display:grid;grid-template-columns:2fr 110px 1fr;gap:8px;align-items:center;padding:.875rem 1.4rem;border-bottom:1px solid var(--rule-soft);font-size:10px;font-weight:700;letter-spacing:.09em;text-transform:uppercase;color:var(--ink-3);background:var(--sand-light)}
+  .tool-row{display:grid;grid-template-columns:2fr 110px 1fr;gap:8px;align-items:center;padding:.8rem 1.4rem;border-bottom:1px solid var(--rule-soft)}
+  .tool-row:last-child{border-bottom:none}
+  .tool-row.highlighted{background:#eaf6f8}
+  .tool-dot-sm{width:10px;height:10px;border-radius:50%;flex-shrink:0}
+  .tool-row-name{font-size:13px;font-weight:700;color:var(--admiral);flex:1;display:flex;align-items:center;gap:8px}
+  .tool-row-cost{font-size:12px;color:var(--ink-3);text-align:right}
+  .tool-row-fit{font-size:12px;color:var(--ink-3);text-align:right}
+  .match-pill{font-size:10px;font-weight:700;padding:2px 9px;border-radius:20px;background:var(--teal);color:var(--white);letter-spacing:.04em;text-transform:uppercase}
+
+  .page-footer{margin-top:3rem;padding-top:1.5rem;border-top:1px solid var(--rule);text-align:center;font-size:11px;color:var(--ink-3)}
+  .page-footer a{color:var(--caspian);text-decoration:none;font-weight:600}
+
+  @media(max-width:520px){main{padding:1.75rem 1rem 3rem}header{padding:0 1rem}.logo-wrap img{height:30px}.pricing-grid{grid-template-columns:1fr}.tool-row-fit{display:none}}
+</style>
+</head>
+<body>
+
+<header>
+  <div class="logo-wrap">
+    <img src="https://optimaoffice.com/wp-content/uploads/2025/05/OptimaOffice_for-awards-and-printing-with-tagline.png" alt="Optima Office"
+         onerror="this.style.display='none';document.getElementById('logo-fb').style.display='block'">
+    <span class="logo-fallback" id="logo-fb">Optima Office</span>
+  </div>
+  <div class="header-label">Reporting Tool Selector</div>
+</header>
+<div class="header-stripe"></div>
+
+<main>
+  <div class="intro" id="intro-block">
+    <h1>Which reporting tool fits this client?</h1>
+    <p>Answer questions about the engagement to get a clear tier recommendation — Bronze through Platinum — with pricing, rationale, and next steps.</p>
+  </div>
+
+  <div class="tier-legend" id="tier-legend">
+    <div class="tier-legend-label">Tiers at a glance</div>
+    <span class="tier-pill tp-bronze">Bronze — QBO Advanced</span>
+    <span class="tier-pill tp-silver">Silver — Fathom Pro</span>
+    <span class="tier-pill tp-gold">Gold — Jirav CE</span>
+    <span class="tier-pill tp-goldp">Gold+ — Jirav CFO Enterprise</span>
+    <span class="tier-pill tp-plat">Platinum — Optima Insights</span>
+  </div>
+
+  <div id="app"></div>
+
+  <div class="page-footer">
+    Optima Office &nbsp;·&nbsp; Internal use only &nbsp;·&nbsp;
+    Questions? <a href="mailto:SoftwareSupport@optimaoffice.com">SoftwareSupport@optimaoffice.com</a>
+  </div>
+</main>
+
+<script>
+const DOT = {bronze:"#7A5C2E", silver:"#58595B", gold:"#8B6914", goldp:"#007DB6", plat:"#084975"};
+
+const TOOLS = {
+  bronze:{
+    key:"bronze", tier:"Bronze", name:"QBO Advanced — Management Reports",
+    bestFor:"Clients on QBO Advanced who are opposed to any additional tool or cost",
+    bg:"var(--bronze-bg)", border:"var(--bronze-border)", text:"var(--bronze-text)",
+    badge:"Bronze  ·  $0 incremental", badgeBg:"var(--bronze-bg)", badgeBorder:"var(--bronze-border)", badgeText:"var(--bronze-text)",
+    tagline:"The baseline tier. Maximizes the reporting capabilities already included in the client's QBO Advanced subscription without introducing any additional cost.",
+    bullets:[
+      "Finance Agent generates AI-driven monthly performance summaries automatically on the 5th",
+      "Saved custom report templates and scheduled email delivery — set up once, runs monthly",
+      "Custom KPI dashboards, cash flow trend charts, and revenue stream breakdowns",
+      "Spreadsheet Sync pushes data to Excel for consolidated multi-company reporting",
+      "Full transaction drill-through — every number traces to a journal entry",
+      "Push-to-publish delivery — controller controls when client sees the report"
+    ],
+    ceiling:"No Optima branding on deliverables. No free self-service client portal (live access requires a paid QBO seat). Finance Agent forecasts are AI trend projections, not driver-based. Only serves QBO clients.",
+    also:"When the client wants a portal, better presentation, or starts asking planning questions — upgrade to Silver (Fathom) or Gold (Jirav CE).",
+    cost_client:"$0 — included in QBO Advanced",
+    cost_optima:"$0 incremental to Optima"
+  },
+  silver:{
+    key:"silver", tier:"Silver", name:"Fathom Pro",
+    bestFor:"Clients who need polished branded reporting with a push-to-publish portal",
+    bg:"var(--silver-bg)", border:"var(--silver-border)", text:"var(--silver-text)",
+    badge:"Silver  ·  Included in Tech Fee", badgeBg:"var(--silver-bg)", badgeBorder:"var(--silver-border)", badgeText:"var(--silver-text)",
+    tagline:"The right tier when a client needs polished reporting with a push-to-publish portal and standard templates meet their needs. Fastest to implement of any third-party tool. Included in the client's Tech Fee.",
+    bullets:[
+      "Push-to-publish portal — controller approves before client sees anything",
+      "Unlimited read-only client access — no per-seat cost",
+      "Scheduled automated report delivery — configure once, runs every month",
+      "3-way cash flow forecasting (P&L, balance sheet, cash flow)",
+      "Native connectors: QBO, Xero, MYOB, Sage Business Cloud, Excel, Google Sheets",
+      "Fastest time-to-first-report of any third-party tool"
+    ],
+    ceiling:"No driver-based forecasting or multi-scenario planning. No native NetSuite or Sage Intacct connector (Excel import workaround only). No upgrade path within Fathom — clients who outgrow it move to Jirav.",
+    also:"When a client asks planning questions, needs custom report layout, or requires payroll integration — upgrade to Gold (Jirav CE).",
+    cost_client:"Included in Tech Fee",
+    cost_optima:"$16–28/mo per client"
+  },
+  gold:{
+    key:"gold", tier:"Gold", name:"Jirav — Controller Essentials",
+    bestFor:"Clients ready for structured budgeting and advisory conversations",
+    bg:"var(--gold-bg)", border:"var(--gold-border)", text:"var(--gold-text)",
+    badge:"Gold  ·  $100–$120/mo to client", badgeBg:"var(--gold-bg)", badgeBorder:"var(--gold-border)", badgeText:"var(--gold-text)",
+    tagline:"The right tier when a client is ready to move beyond reporting into structured budgeting. Fully customizable layouts, AI-assisted forecasting, and payroll integration — with a seamless upgrade path to Gold+.",
+    bullets:[
+      "AI auto-forecast + budget vs. actual — structured reporting with a planning layer",
+      "Fully customizable report layouts, sections, and narrative blocks per client",
+      "1-year forecast horizon, 2 active plans",
+      "Native GL: QBO, Xero, NetSuite, Sage Intacct, Excel",
+      "Native payroll/HRIS: Gusto, ADP, BambooHR, Paylocity",
+      "Push-to-publish portal with unlimited read-only client access",
+      "Template cloning — build once, deploy to similar clients in hours",
+      "Seamless upgrade to Gold+ — same platform, no migration"
+    ],
+    ceiling:"No custom driver-based models — AI forecast only. Two active plans limits multi-scenario analysis. One-year horizon rules out long-range planning.",
+    also:"When a client needs multi-scenario modeling, a 7-year forecast, a full 3-statement model, or board packages — upgrade to Gold+ (Jirav CFO Enterprise).",
+    cost_client:"$100–$120/mo per client",
+    cost_optima:"$50/mo per client"
+  },
+  goldp:{
+    key:"goldp", tier:"Gold+", name:"Jirav — CFO Enterprise",
+    bestFor:"Clients requiring robust FP&A — driver-based models, scenarios, board packages",
+    bg:"var(--goldp-bg)", border:"var(--goldp-border)", text:"var(--goldp-text)",
+    badge:"Gold+  ·  $300–$500/mo to client", badgeBg:"var(--goldp-bg)", badgeBorder:"var(--goldp-border)", badgeText:"var(--goldp-text)",
+    tagline:"Robust FP&A tools for clients who need driver-based financial models, multi-scenario planning, and board-ready packages. 5 active scenarios, 7-year forecasts, and bottoms-up departmental budgets.",
+    bullets:[
+      "Driver-based 3-statement forecasting — every number traces to a named assumption",
+      "5 active scenarios, 7-year horizon — board plans, investor packages, covenant monitoring",
+      "Bottoms-up departmental budgets — department heads input their own plans",
+      "Push-to-publish portal — controller approves before client sees any deliverable",
+      "Native payroll/HRIS: Gusto, ADP, BambooHR, Paylocity, UKG Pro",
+      "Native GL: QBO, Xero, NetSuite, Sage Intacct — real-time sync"
+    ],
+    ceiling:"Steeper learning curve — first driver-based model takes 2–4 weeks for complex clients. Best economics above $5,000/mo service tier.",
+    also:"If this client also needs CRM or data warehouse data integrated into reporting, add Optima Insights (Platinum) as the reporting layer alongside Jirav for planning.",
+    cost_client:"$300–$500/mo per client",
+    cost_optima:"$150/mo per client"
+  },
+  plat:{
+    key:"plat", tier:"Platinum", name:"Optima Insights (Power BI)",
+    bestFor:"Clients needing CRM, data warehouse, or external non-GL data in their reporting",
+    bg:"var(--plat-bg)", border:"var(--plat-border)", text:"var(--plat-text)",
+    badge:"Platinum  ·  $500+/mo to client", badgeBg:"var(--plat-bg)", badgeBorder:"var(--plat-border)", badgeText:"var(--plat-text)",
+    tagline:"The only tool in this stack that connects to CRM systems, data warehouses, and custom external data sources. Fully built and delivered as an Optima product. Does not support forecasting.",
+    bullets:[
+      "Connects to any data source: CRM (Salesforce, HubSpot), data warehouses (Redshift, BigQuery, Snowflake, SQL), custom APIs, and Excel",
+      "Fully built and delivered as an Optima product — Optima's package, Optima's name",
+      "Maximum layout and visualization control — no vendor-imposed structure",
+      "Push-to-publish model — Optima controls when client sees updated data",
+      "Near-zero per-client marginal cost once the master template is built"
+    ],
+    ceiling:"Reporting and visualization only — no forecasting or budgeting. Requires Power BI skills (DAX, Power Query) in-house. Client portal requires Power BI Pro per user. All upkeep is Optima's responsibility.",
+    also:"When this client also needs forward-looking planning, pair with Jirav CE (Gold) or CFO Enterprise (Gold+). Optima Insights handles reporting; Jirav handles planning.",
+    cost_client:"$500+/mo",
+    cost_optima:"Cost of custom build + Power BI Pro (~$10/user/mo)"
+  }
+};
+
+const ALL_TOOLS = [
+  {key:"bronze", name:"Bronze — QBO Advanced",       cost:"$0",          fit:"Maximize existing QBO"},
+  {key:"silver", name:"Silver — Fathom Pro",          cost:"Tech Fee",    fit:"Best portal experience"},
+  {key:"gold",   name:"Gold — Jirav CE",              cost:"$100–120/mo", fit:"Budgeting + advisory"},
+  {key:"goldp",  name:"Gold+ — Jirav CFO Enterprise", cost:"$300–500/mo", fit:"Robust FP&A tools"},
+  {key:"plat",   name:"Platinum — Optima Insights",  cost:"$500+/mo",    fit:"CRM / data warehouse"},
+];
+
+// ─── Decision tree ────────────────────────────────────────────────────────────
+// Simplified flow:
+// 1. Platform
+// 2. Does client need external data (CRM/DW)? → Platinum
+// 3. Does client need planning/forecasting?
+//    → No: reporting only → Silver (standard) or Silver (already)
+//    → Yes: how complex? → Gold or Gold+
+// 4. Service tier check (for Gold/Gold+ economics)
+// 5. Result
+
+const NODES = {
+
+  // ── Step 1: Platform ───────────────────────────────────────────────────────
+  start:{
+    q:"What accounting platform is this client currently on?",
+    choices:[
+      {label:"QBO Advanced", next:"qbo_adv"},
+      {label:"QBO Plus or Essentials", next:"qbo_lower"},
+      {label:"Xero", next:"xero"},
+      {label:"NetSuite or Sage Intacct", next:"erp"},
+      {label:"QuickBooks Desktop or other non-cloud system", next:"qbd"}
+    ]
+  },
+
+  // ── QBO Advanced ──────────────────────────────────────────────────────────
+  qbo_adv:{
+    q:"What does this client need from Optima's reporting service?",
+    context:"QBO Advanced already includes Finance Agent, custom dashboards, and scheduled delivery. A third-party tool adds a structured reporting layer, planning capability, or client portal that QBO alone cannot replicate.",
+    choices:[
+      {label:"Client is opposed to any additional tool or cost — maximize QBO only", next:"result_bronze", tier:"bronze"},
+      {label:"Better reporting with a branded client portal (no planning needed)", next:"qbo_adv_report_conn", tier:"silver"},
+      {label:"Reporting plus structured budgeting, forecasting, or advisory conversations", next:"qbo_adv_plan_conn", tier:"gold"},
+      {label:"CRM, data warehouse, or other external data needs to be in reports", next:"result_plat", tier:"plat"}
+    ]
+  },
+  qbo_adv_report_conn:{
+    q:"Does the reporting engagement require connectors beyond the QBO GL?",
+    context:"Fathom Pro connects to QBO natively but pulls GL data only. If payroll or HRIS data needs to appear in reports or dashboards, Jirav CE is required even for reporting-only engagements.",
+    choices:[
+      {label:"No — GL data is sufficient for reporting", next:"result_silver", tier:"silver"},
+      {label:"Yes — payroll or HRIS data (Gusto, ADP, BambooHR, Paylocity)", next:"result_gold", tier:"gold"},
+      {label:"Yes — CRM or data warehouse data", next:"result_plat", tier:"plat"}
+    ]
+  },
+  qbo_adv_plan_conn:{
+    q:"Does the forecast or planning model need data beyond the QBO GL?",
+    context:"Jirav CE connects natively to payroll and HRIS systems. For service businesses where labor is 60–80% of cost, live payroll data makes the forecast significantly more accurate.",
+    choices:[
+      {label:"No — QBO GL data is sufficient for the forecast", next:"planning_depth", tier:"gold"},
+      {label:"Yes — payroll or HRIS data (Gusto, ADP, BambooHR, Paylocity)", next:"planning_depth", tier:"gold"},
+      {label:"Yes — also need CRM or data warehouse data", next:"result_plat", tier:"plat"}
+    ]
+  },
+
+  // ── QBO Plus / Essentials ─────────────────────────────────────────────────
+  qbo_lower:{
+    q:"What does this client need from a reporting and planning tool?",
+    context:"Clients on QBO Plus/Essentials are strong candidates for a dedicated tool. The right tier depends on whether planning is needed and how complex the data requirements are.",
+    choices:[
+      {label:"Polished reporting with a client portal — no planning needed", next:"qbo_lower_connectors", tier:"silver"},
+      {label:"Reporting plus budgeting, forecasting, or advisory", next:"qbo_lower_connectors_plan", tier:"gold"},
+      {label:"CRM, data warehouse, or other external data in reporting", next:"result_plat", tier:"plat"},
+      {label:"Client opposed to any separate tool", next:"result_bronze", tier:"bronze"}
+    ]
+  },
+  qbo_lower_connectors:{
+    q:"Does this reporting engagement require connectors beyond the GL?",
+    choices:[
+      {label:"No — GL data is sufficient", next:"result_silver", tier:"silver"},
+      {label:"Yes — payroll or HRIS data (Gusto, ADP, BambooHR, Paylocity)", next:"result_gold", tier:"gold"},
+      {label:"Yes — CRM or data warehouse data", next:"result_plat", tier:"plat"}
+    ]
+  },
+  qbo_lower_connectors_plan:{
+    q:"Does the forecast or planning model need data beyond the GL?",
+    choices:[
+      {label:"No — GL data is sufficient for the forecast", next:"planning_depth", tier:"gold"},
+      {label:"Yes — payroll or HRIS data should feed the model", next:"planning_depth", tier:"gold"},
+      {label:"Yes — also need CRM or data warehouse data", next:"result_plat", tier:"plat"}
+    ]
+  },
+
+  // ── Xero ──────────────────────────────────────────────────────────────────
+  xero:{
+    q:"What does this Xero client primarily need?",
+    choices:[
+      {label:"Polished reporting with a client portal — no planning needed", next:"xero_report_conn", tier:"silver"},
+      {label:"Reporting plus budgeting, forecasting, or advisory", next:"xero_plan_conn", tier:"gold"},
+      {label:"CRM, data warehouse, or other external data in reporting", next:"result_plat", tier:"plat"}
+    ]
+  },
+  xero_report_conn:{
+    q:"Does the reporting engagement require connectors beyond the Xero GL?",
+    context:"Fathom Pro connects natively to Xero (GL data only). If payroll or HRIS data needs to appear in reports, Jirav CE is required.",
+    choices:[
+      {label:"No — Xero GL data is sufficient for reporting", next:"result_silver", tier:"silver"},
+      {label:"Yes — payroll or HRIS data (Gusto, ADP, BambooHR, Paylocity)", next:"result_gold", tier:"gold"},
+      {label:"Yes — CRM or data warehouse data", next:"result_plat", tier:"plat"}
+    ]
+  },
+  xero_plan_conn:{
+    q:"Does the forecast or planning model need data beyond the Xero GL?",
+    context:"Jirav CE connects natively to Xero and to payroll/HRIS systems. CRM or data warehouse needs point to Optima Insights.",
+    choices:[
+      {label:"No — Xero GL data is sufficient for the forecast", next:"planning_depth", tier:"gold"},
+      {label:"Yes — payroll or HRIS data (Gusto, ADP, BambooHR, Paylocity)", next:"planning_depth", tier:"gold"},
+      {label:"Yes — CRM or data warehouse data", next:"result_plat", tier:"plat"}
+    ]
+  },
+
+  // ── ERP ───────────────────────────────────────────────────────────────────
+  erp:{
+    q:"What does this ERP client primarily need?",
+    context:"Jirav connects natively to NetSuite and Sage Intacct. Fathom does not — Excel import is the only workaround for ERP reporting clients.",
+    choices:[
+      {label:"Reporting and dashboards only — no planning", next:"erp_reporting", tier:"silver"},
+      {label:"FP&A planning — budgets, forecasts, scenarios", next:"erp_plan_conn", tier:"gold"},
+      {label:"Both reporting and planning", next:"erp_plan_conn", tier:"gold"},
+      {label:"CRM or data warehouse data in reporting", next:"result_plat", tier:"plat"}
+    ]
+  },
+  erp_reporting:{
+    q:"Is a native connector to NetSuite or Sage Intacct required?",
+    context:"Fathom Pro does not connect natively to ERP systems — Excel import adds a manual monthly step. Jirav CE connects natively and eliminates that step.",
+    choices:[
+      {label:"Native connector required — no manual imports", next:"result_gold", tier:"gold"},
+      {label:"Excel import is acceptable", next:"result_silver", tier:"silver"}
+    ]
+  },
+  erp_plan_conn:{
+    q:"Does the planning model need data beyond the ERP GL?",
+    context:"Jirav connects natively to NetSuite and Intacct. It also connects to payroll/HRIS systems — useful when headcount is a major cost driver. CRM or data warehouse needs point to Optima Insights.",
+    choices:[
+      {label:"No — GL data is sufficient for the model", next:"planning_depth", tier:"gold"},
+      {label:"Yes — payroll or HRIS data (Gusto, ADP, BambooHR, Paylocity, UKG Pro)", next:"planning_depth", tier:"gold"},
+      {label:"Yes — also need CRM or data warehouse data", next:"result_plat", tier:"plat"}
+    ]
+  },
+
+  // ── QBD ───────────────────────────────────────────────────────────────────
+  qbd:{
+    q:"Is this client expected to migrate to QBO, or staying on Desktop long-term?",
+    context:"All reporting tools in this stack use cloud accounting as their primary data source. Desktop clients require an Excel export workaround.",
+    choices:[
+      {label:"Migrating to QBO — set up for the cloud environment now", next:"qbo_lower"},
+      {label:"Staying on Desktop — Excel import workaround is acceptable", next:"qbd_scope"}
+    ]
+  },
+  qbd_scope:{
+    q:"What is the primary deliverable for this Desktop client?",
+    choices:[
+      {label:"Polished monthly reports and KPI dashboard", next:"result_silver", tier:"silver"},
+      {label:"Budgeting, forecasting, and advisory conversations", next:"qbd_plan_conn", tier:"gold"}
+    ]
+  },
+  qbd_plan_conn:{
+    q:"Does the planning model need data beyond the GL export?",
+    context:"All data enters via Excel import for Desktop clients. Payroll data can also be imported manually. CRM or data warehouse needs point to Optima Insights.",
+    choices:[
+      {label:"No — GL data export is sufficient for the model", next:"planning_depth", tier:"gold"},
+      {label:"Yes — payroll or HRIS data will also be imported", next:"planning_depth", tier:"gold"},
+      {label:"Yes — also need CRM or data warehouse data", next:"result_plat", tier:"plat"}
+    ]
+  },
+
+  // ── Planning depth (shared) ───────────────────────────────────────────────
+  planning_depth:{
+    q:"How complex is the planning work this client needs?",
+    context:"This is the key split between Gold (Jirav CE) and Gold+ (Jirav CFO Enterprise). Both run on the same platform — CE can upgrade to CFO Enterprise at any time with no migration.",
+    choices:[
+      {label:"Budget vs. actual + AI-assisted rolling forecast — structured but not complex", next:"gold_tier", tier:"gold"},
+      {label:"Multi-scenario modeling, driver-based forecasts, or board/investor packages", next:"goldp_tier", tier:"goldp"},
+      {label:"Not sure yet — start simple, can grow later", next:"gold_tier", tier:"gold"}
+    ]
+  },
+
+  // ── Tier checks ───────────────────────────────────────────────────────────
+  gold_tier:{
+    q:"What is this client's approximate monthly service level with Optima?",
+    context:"Jirav CE is $50/mo to Optima and $100–120/mo to the client. This confirms the engagement economics before recommending the tool.",
+    choices:[
+      {label:"Under $1,000/mo", next:"gold_low"},
+      {label:"$1,000 – $2,500/mo", next:"gold_entity"},
+      {label:"$2,500 – $5,000/mo", next:"gold_entity"},
+      {label:"Over $5,000/mo", next:"gold_entity"}
+    ]
+  },
+  gold_low:{
+    q:"Is this service level expected to grow, or is it likely to stay under $1,000/mo?",
+    choices:[
+      {label:"Growing — this engagement is expanding toward higher-complexity advisory", next:"gold_entity"},
+      {label:"Stable — this is the right scope for this client right now", next:"gold_entity"}
+    ]
+  },
+  gold_entity:{
+    q:"Does this client have multiple entities needing consolidated reporting?",
+    choices:[
+      {label:"No — single entity", next:"result_gold", tier:"gold"},
+      {label:"Yes — 2 to 5 entities", next:"result_gold", tier:"gold"},
+      {label:"Yes — more than 5 entities, consolidation is the primary need", next:"result_silver", tier:"silver"}
+    ]
+  },
+
+  goldp_tier:{
+    q:"What is this client's approximate monthly service level with Optima?",
+    context:"Jirav CFO Enterprise is $150/mo to Optima and $300–500/mo to the client. Best economics at $5,000+/mo engagements.",
+    choices:[
+      {label:"Under $2,500/mo", next:"goldp_low"},
+      {label:"$2,500 – $5,000/mo", next:"result_goldp", tier:"goldp"},
+      {label:"Over $5,000/mo", next:"result_goldp", tier:"goldp"}
+    ]
+  },
+  goldp_low:{
+    q:"Is this engagement expected to grow toward $5,000+/mo?",
+    choices:[
+      {label:"Growing — likely full CFO scope within 6–12 months", next:"result_goldp", tier:"goldp"},
+      {label:"Stable — this is the right scope for this client", next:"gold_entity"}
+    ]
+  },
+
+  // ── Direct results ─────────────────────────────────────────────────────────
+  result_bronze:{ result:"bronze" },
+  result_silver:{ result:"silver" },
+  result_gold:  { result:"gold" },
+  result_goldp: { result:"goldp" },
+  result_plat:  { result:"plat" }
+};
+
+// ─── Engine ───────────────────────────────────────────────────────────────────
+let history=[], crumbs=[];
+const TOTAL=7;
+
+function node(){ return history.length===0 ? NODES.start : NODES[history[history.length-1]]; }
+function pct(){ return Math.min(94, Math.round(history.length/TOTAL*100)); }
+function chev(d){ return d==="left"
+  ? `<svg width="14" height="14" viewBox="0 0 14 14" fill="none" style="vertical-align:-2px"><path d="M9 2L4 7l5 5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>`
+  : `<svg width="14" height="14" viewBox="0 0 14 14" fill="none" style="vertical-align:-2px"><path d="M5 2l5 5-5 5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>`; }
+
+const TIER_PILL_STYLE = {
+  bronze:`background:var(--bronze-bg);border:1.5px solid var(--bronze-border);color:var(--bronze-text)`,
+  silver:`background:var(--silver-bg);border:1.5px solid var(--silver-border);color:var(--silver-text)`,
+  gold:`background:var(--gold-bg);border:1.5px solid var(--gold-border);color:var(--gold-text)`,
+  goldp:`background:var(--goldp-bg);border:1.5px solid var(--goldp-border);color:var(--goldp-text)`,
+  plat:`background:var(--plat-bg);border:1.5px solid var(--plat-border);color:var(--plat-text)`
+};
+const TIER_LABEL = {bronze:"Bronze",silver:"Silver",gold:"Gold",goldp:"Gold+",plat:"Platinum"};
+
+function renderResult(key){
+  const t = TOOLS[key];
+  document.getElementById("intro-block").style.display="none";
+  document.getElementById("tier-legend").style.display="none";
+  let h=`<div class="result-wrap">
+    <div class="result-eyebrow">Recommendation for this client</div>
+    <div class="result-title">${t.tier} — ${t.name}</div>
+    <div class="result-card" style="background:${t.bg};border-color:${t.border}">
+      <div class="tool-badge" style="background:${t.badgeBg};border-color:${t.badgeBorder};color:${t.badgeText}">${t.badge}</div>
+      <div class="tool-best-for" style="color:${t.text}">Best for</div>
+      <div class="tool-name" style="color:${t.text}">${t.bestFor}</div>
+      <div class="tool-tagline" style="color:${t.text}">${t.tagline}</div>
+      <ul class="tool-bullets" style="color:${t.text}">${t.bullets.map(b=>`<li>${b}</li>`).join("")}</ul>
+      <div class="tool-ceiling" style="color:${t.text}"><strong>Ceiling to know before committing</strong>${t.ceiling}</div>
+    </div>
+    <div class="pricing-grid">
+      <div class="pricing-cell"><div class="label">Client cost</div><div class="value">${t.cost_client}</div></div>
+      <div class="pricing-cell"><div class="label">Optima cost</div><div class="value note">${t.cost_optima}</div></div>
+    </div>
+    <div class="info-card"><div class="info-label">When the client outgrows this</div><div class="info-text">${t.also}</div></div>`;
+
+  if(crumbs.length>0){
+    h+=`<div class="info-card"><div class="info-label">Your answers</div><div style="display:flex;flex-wrap:wrap;gap:6px;margin-top:.4rem">${crumbs.map(c=>`<span class="crumb">${c}</span>`).join("")}</div></div>`;
+  }
+
+  const enc=encodeURIComponent(t.name);
+  h+=`<div class="next-steps-card">
+    <div class="info-label">Next steps</div>
+    <div class="info-text">
+      To begin implementation or discuss this recommendation, contact Software Support. Include the client name, recommended tier, and any connector or integration requirements.<br><br>
+      <a href="mailto:SoftwareSupport@optimaoffice.com?subject=Reporting Tool Request — ${enc}&body=Tier recommended: ${enc}%0D%0AClient name: %0D%0AConnectors required: %0D%0AAdditional notes: ">Email SoftwareSupport@optimaoffice.com &rarr;</a><br><br>
+      <a href="https://optimaofficecom.sharepoint.com/:x:/s/MasterDocuments/IQA2PQGsMKaFRok51oPt2f17Acxt6NuGDhrhi8mVGwA_7Dg?e=7vE25X" target="_blank">View full platform comparison guide &rarr;</a>
+    </div>
+  </div>
+  <div class="result-actions">
+    <button class="action-btn" data-action="restart">Assess another client</button>
+    <button class="action-btn-ghost" data-action="toggle-all">All five tiers ${chev("right")}</button>
+  </div>
+  <div id="all-block" style="display:none;margin-top:1rem">
+    <div class="all-tools">
+      <div class="all-tools-header"><span>Tier / Tool</span><span style="text-align:right">Client cost</span><span style="text-align:right">Best for</span></div>
+      ${ALL_TOOLS.map(tool=>`<div class="tool-row ${tool.key===key?"highlighted":""}">
+        <div class="tool-row-name"><div class="tool-dot-sm" style="background:${DOT[tool.key]}"></div>${tool.name}${tool.key===key?'<span class="match-pill">recommended</span>':''}</div>
+        <div class="tool-row-cost">${tool.cost}</div>
+        <div class="tool-row-fit">${tool.fit}</div>
+      </div>`).join("")}
+    </div>
+  </div></div>`;
+  return h;
+}
+
+function renderQuestion(n){
+  document.getElementById("intro-block").style.display=history.length>0?"none":"";
+  document.getElementById("tier-legend").style.display=history.length>0?"none":"";
+  let h="";
+  if(history.length>0){
+    h+=`<div class="progress-wrap"><div class="progress-bar"><div class="progress-fill" style="width:${pct()}%"></div></div><div class="progress-label">${pct()}%</div></div>`;
+  }
+  if(crumbs.length>0){
+    h+=`<div class="breadcrumbs">${crumbs.map(c=>`<span class="crumb">${c}</span>`).join("")}</div>`;
+  }
+  h+=`<div class="question-card">`;
+  if(history.length>0) h+=`<div class="step-number">Question ${history.length+1}</div>`;
+  h+=`<div class="question-text">${n.q}</div>`;
+  if(n.context) h+=`<div class="question-context">${n.context}</div>`;
+  h+=`<div class="choices">${n.choices.map((c,i)=>{
+    const tierStyle = c.tier ? `style="${TIER_PILL_STYLE[c.tier]}"` : "";
+    const tierLabel = c.tier ? `<span class="choice-tier" ${tierStyle}>${TIER_LABEL[c.tier]}</span>` : "";
+    return `<button class="choice-btn" data-pick="${i}"><div class="choice-dot"></div><span style="flex:1">${c.label}</span>${tierLabel}</button>`;
+  }).join("")}</div>`;
+  h+=`<div class="card-footer">
+    <button class="back-btn" data-action="back" ${history.length===0?"disabled":""}>${chev("left")} Back</button>
+    <button class="restart-btn" data-action="restart">Start over</button>
+  </div></div>`;
+  return h;
+}
+
+function toggleAll(){
+  const el=document.getElementById("all-block");
+  if(el) el.style.display=el.style.display==="none"?"block":"none";
+}
+
+function render(){
+  const n=node(), app=document.getElementById("app");
+  app.innerHTML=n.result ? renderResult(n.result) : renderQuestion(n);
+  app.querySelectorAll("[data-pick]").forEach(btn=>{
+    btn.addEventListener("click",function(){ pick(parseInt(this.dataset.pick)); });
+  });
+  app.querySelectorAll("[data-action]").forEach(btn=>{
+    btn.addEventListener("click",function(){
+      const a=this.dataset.action;
+      if(a==="back") back();
+      else if(a==="restart") restart();
+      else if(a==="toggle-all") toggleAll();
+    });
+  });
+  window.scrollTo({top:0,behavior:"smooth"});
+}
+
+function pick(i){
+  const c=node().choices[i];
+  crumbs.push(c.label.length>54?c.label.slice(0,52)+"…":c.label);
+  history.push(c.next);
+  render();
+}
+function back(){ if(history.length>0){ history.pop(); crumbs.pop(); render(); } }
+function restart(){
+  history=[];crumbs=[];
+  document.getElementById("intro-block").style.display="";
+  document.getElementById("tier-legend").style.display="";
+  render();
+}
+render();
+</script>
+</body>
+</html>
