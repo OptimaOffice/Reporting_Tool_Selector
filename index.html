@@ -193,20 +193,22 @@ const TOOLS = {
   },
   silver:{
     key:"silver", tier:"Silver", name:"Fathom Pro",
-    bestFor:"Clients who need polished branded reporting with a push-to-publish portal",
+    bestFor:"Clients who need polished reporting, a branded portal, driver-based forecasting, or a 3-statement model — without payroll integration",
     bg:"var(--silver-bg)", border:"var(--silver-border)", text:"var(--silver-text)",
     badge:"Silver  ·  Included in Tech Fee", badgeBg:"var(--silver-bg)", badgeBorder:"var(--silver-border)", badgeText:"var(--silver-text)",
-    tagline:"The right tier when a client needs polished reporting with a push-to-publish portal and standard templates meet their needs. Fastest to implement of any third-party tool. Included in the client's Tech Fee.",
+    tagline:"Fathom includes driver-based forecasting, a fully interconnected 3-statement model, AI-assisted narrative, and budget vs. actual — all included in the client's Tech Fee.",
     bullets:[
-      "Push-to-publish portal — controller approves before client sees anything",
-      "Unlimited read-only client access — no per-seat cost",
-      "Scheduled automated report delivery — configure once, runs every month",
-      "3-way cash flow forecasting (P&L, balance sheet, cash flow)",
+      "Push-to-publish portal — controller approves before client sees anything; unlimited read-only client access at no per-seat cost",
+      "Driver-based forecasting with a fully interconnected 3-statement model (P&L, balance sheet, cash flow)",
+      "Budget vs. actual using the client's QBO budget as reference",
+      "AI-assisted narrative blocks built in — controller edits, not written from scratch",
+      "Flexible branded report layout — cover, logo, colors, and section structure",
       "Native connectors: QBO, Xero, MYOB, Sage Business Cloud, Excel, Google Sheets",
+      "Multi-entity consolidation up to 300 entities",
       "Fastest time-to-first-report of any third-party tool"
     ],
-    ceiling:"No driver-based forecasting or multi-scenario planning. No native NetSuite or Sage Intacct connector (Excel import workaround only). No upgrade path within Fathom — clients who outgrow it move to Jirav.",
-    also:"When a client asks planning questions, needs custom report layout, or requires payroll integration — upgrade to Gold (Jirav CE).",
+    ceiling:"No payroll or HRIS connector — workforce data cannot feed the forecast natively. No native NetSuite or Sage Intacct connector (Excel import only). Multi-scenario planning is limited to micro-forecasting toggles, not full named scenarios. Report layout is flexible but less granular than Jirav's per-client custom sections.",
+    also:"Upgrade to Gold (Jirav CE) when the client needs payroll/HRIS data feeding the model, a native ERP connector, or a fully per-client custom report structure. Upgrade to Gold+ when the engagement requires 5-scenario planning, a 7-year forecast horizon, departmental bottoms-up budgets, or covenant tracking.",
     cost_client:"Included in Tech Fee",
     cost_optima:"$16–28/mo per client"
   },
@@ -226,8 +228,8 @@ const TOOLS = {
       "Template cloning — build once, deploy to similar clients in hours",
       "Seamless upgrade to Gold+ — same platform, no migration"
     ],
-    ceiling:"No custom driver-based models — AI forecast only. Two active plans limits multi-scenario analysis. One-year horizon rules out long-range planning.",
-    also:"When a client needs multi-scenario modeling, a 7-year forecast, a full 3-statement model, or board packages — upgrade to Gold+ (Jirav CFO Enterprise).",
+    ceiling:"Two active plans limits multi-scenario analysis — clients needing 5 named scenarios need Gold+. One-year AI forecast horizon — 7-year driver-based planning requires Gold+. No departmental bottoms-up budgets or covenant tracking.",
+    also:"When a client needs 5-scenario modeling, a 7-year forecast horizon, a departmental bottoms-up budget, board/investor packages with covenant tracking, or UKG Pro payroll integration — upgrade to Gold+ (Jirav CFO Enterprise).",
     cost_client:"$100–$120/mo per client",
     cost_optima:"$50/mo per client"
   },
@@ -305,11 +307,10 @@ const NODES = {
   // ── QBO Advanced ──────────────────────────────────────────────────────────
   qbo_adv:{
     q:"What does this client need from Optima's reporting service?",
-    context:"QBO Advanced already includes Finance Agent, custom dashboards, and scheduled delivery. A third-party tool adds a structured reporting layer, planning capability, or client portal that QBO alone cannot replicate.",
     choices:[
       {label:"Client is opposed to any additional tool or cost — maximize QBO only", next:"result_bronze", tier:"bronze"},
-      {label:"Better reporting with a branded client portal (no planning needed)", next:"qbo_adv_report_conn", tier:"silver"},
-      {label:"Reporting plus structured budgeting, forecasting, or advisory conversations", next:"qbo_adv_plan_conn", tier:"gold"},
+      {label:"Better reporting and an easy-to-use branded client portal", next:"qbo_adv_report_conn", tier:"silver"},
+      {label:"Reporting plus structured budgeting, forecasting, or advisory conversations", next:"qbo_adv_plan_conn", tier:"silver"},
       {label:"CRM, data warehouse, or other external data needs to be in reports", next:"result_plat", tier:"plat"}
     ]
   },
@@ -323,11 +324,11 @@ const NODES = {
     ]
   },
   qbo_adv_plan_conn:{
-    q:"Does the forecast or planning model need data beyond the QBO GL?",
-    context:"Jirav CE connects natively to payroll and HRIS systems. For service businesses where labor is 60–80% of cost, live payroll data makes the forecast significantly more accurate.",
+    q:"Does the forecast or planning model need payroll or HRIS data?",
+    context:"Fathom (Silver) now handles driver-based forecasting and 3-statement models using GL data. Jirav CE (Gold) is required when payroll or HRIS data needs to feed the model natively — for example, when headcount is a major cost driver and the controller wants live payroll data rather than manual inputs.",
     choices:[
-      {label:"No — QBO GL data is sufficient for the forecast", next:"planning_depth", tier:"gold"},
-      {label:"Yes — payroll or HRIS data (Gusto, ADP, BambooHR, Paylocity)", next:"planning_depth", tier:"gold"},
+      {label:"No — GL data is sufficient; payroll can be entered manually if needed", next:"planning_depth", tier:"silver"},
+      {label:"Yes — payroll or HRIS data (Gusto, ADP, BambooHR, Paylocity) needs to feed the model", next:"gold_tier", tier:"gold"},
       {label:"Yes — also need CRM or data warehouse data", next:"result_plat", tier:"plat"}
     ]
   },
@@ -335,10 +336,10 @@ const NODES = {
   // ── QBO Plus / Essentials ─────────────────────────────────────────────────
   qbo_lower:{
     q:"What does this client need from a reporting and planning tool?",
-    context:"Clients on QBO Plus/Essentials are strong candidates for a dedicated tool. The right tier depends on whether planning is needed and how complex the data requirements are.",
+    context:"Silver (Fathom) now includes driver-based forecasting, a 3-statement model, and budget vs. actual — it covers more planning ground than it used to. Gold (Jirav CE) is the step up when payroll integration or fully per-client custom layouts are needed.",
     choices:[
-      {label:"Polished reporting with a client portal — no planning needed", next:"qbo_lower_connectors", tier:"silver"},
-      {label:"Reporting plus budgeting, forecasting, or advisory", next:"qbo_lower_connectors_plan", tier:"gold"},
+      {label:"Better reporting and an easy-to-use branded client portal", next:"qbo_lower_connectors", tier:"silver"},
+      {label:"Reporting plus budgeting, forecasting, or advisory", next:"qbo_lower_connectors_plan", tier:"silver"},
       {label:"CRM, data warehouse, or other external data in reporting", next:"result_plat", tier:"plat"},
       {label:"Client opposed to any separate tool", next:"result_bronze", tier:"bronze"}
     ]
@@ -352,10 +353,11 @@ const NODES = {
     ]
   },
   qbo_lower_connectors_plan:{
-    q:"Does the forecast or planning model need data beyond the GL?",
+    q:"Does the forecast or planning model need payroll or HRIS data?",
+    context:"Fathom (Silver) handles driver-based forecasting and 3-statement models using GL data. Jirav CE (Gold) is needed when payroll or HRIS data must feed the model natively.",
     choices:[
-      {label:"No — GL data is sufficient for the forecast", next:"planning_depth", tier:"gold"},
-      {label:"Yes — payroll or HRIS data should feed the model", next:"planning_depth", tier:"gold"},
+      {label:"No — GL data is sufficient; payroll can be entered manually if needed", next:"planning_depth", tier:"silver"},
+      {label:"Yes — payroll or HRIS data (Gusto, ADP, BambooHR, Paylocity) needs to feed the model", next:"gold_tier", tier:"gold"},
       {label:"Yes — also need CRM or data warehouse data", next:"result_plat", tier:"plat"}
     ]
   },
@@ -363,9 +365,10 @@ const NODES = {
   // ── Xero ──────────────────────────────────────────────────────────────────
   xero:{
     q:"What does this Xero client primarily need?",
+    context:"Silver (Fathom) connects natively to Xero and now includes driver-based forecasting and 3-statement models. Gold (Jirav CE) is needed when payroll integration or fully per-client custom layouts are required.",
     choices:[
-      {label:"Polished reporting with a client portal — no planning needed", next:"xero_report_conn", tier:"silver"},
-      {label:"Reporting plus budgeting, forecasting, or advisory", next:"xero_plan_conn", tier:"gold"},
+      {label:"Better reporting and an easy-to-use branded client portal", next:"xero_report_conn", tier:"silver"},
+      {label:"Reporting plus budgeting, forecasting, or advisory", next:"xero_plan_conn", tier:"silver"},
       {label:"CRM, data warehouse, or other external data in reporting", next:"result_plat", tier:"plat"}
     ]
   },
@@ -379,12 +382,12 @@ const NODES = {
     ]
   },
   xero_plan_conn:{
-    q:"Does the forecast or planning model need data beyond the Xero GL?",
-    context:"Jirav CE connects natively to Xero and to payroll/HRIS systems. CRM or data warehouse needs point to Optima Insights.",
+    q:"Does the forecast or planning model need payroll or HRIS data?",
+    context:"Fathom connects natively to Xero and handles driver-based forecasting using GL data. Jirav CE is needed when payroll or HRIS data must feed the model natively.",
     choices:[
-      {label:"No — Xero GL data is sufficient for the forecast", next:"planning_depth", tier:"gold"},
-      {label:"Yes — payroll or HRIS data (Gusto, ADP, BambooHR, Paylocity)", next:"planning_depth", tier:"gold"},
-      {label:"Yes — CRM or data warehouse data", next:"result_plat", tier:"plat"}
+      {label:"No — Xero GL data is sufficient; payroll can be entered manually if needed", next:"planning_depth", tier:"silver"},
+      {label:"Yes — payroll or HRIS data (Gusto, ADP, BambooHR, Paylocity) needs to feed the model", next:"gold_tier", tier:"gold"},
+      {label:"Yes — CRM or data warehouse data also needed", next:"result_plat", tier:"plat"}
     ]
   },
 
@@ -408,11 +411,11 @@ const NODES = {
     ]
   },
   erp_plan_conn:{
-    q:"Does the planning model need data beyond the ERP GL?",
-    context:"Jirav connects natively to NetSuite and Intacct. It also connects to payroll/HRIS systems — useful when headcount is a major cost driver. CRM or data warehouse needs point to Optima Insights.",
+    q:"Does the planning model need payroll or HRIS data beyond the ERP GL?",
+    context:"For ERP clients, Jirav (Gold/Gold+) is already required for native GL connectivity. The question here is whether payroll data also needs to feed the model natively.",
     choices:[
-      {label:"No — GL data is sufficient for the model", next:"planning_depth", tier:"gold"},
-      {label:"Yes — payroll or HRIS data (Gusto, ADP, BambooHR, Paylocity, UKG Pro)", next:"planning_depth", tier:"gold"},
+      {label:"No — ERP GL data is sufficient for the model", next:"planning_depth", tier:"gold"},
+      {label:"Yes — payroll or HRIS data (Gusto, ADP, BambooHR, Paylocity, UKG Pro) needs to feed the model", next:"gold_tier", tier:"gold"},
       {label:"Yes — also need CRM or data warehouse data", next:"result_plat", tier:"plat"}
     ]
   },
@@ -434,42 +437,46 @@ const NODES = {
     ]
   },
   qbd_plan_conn:{
-    q:"Does the planning model need data beyond the GL export?",
-    context:"All data enters via Excel import for Desktop clients. Payroll data can also be imported manually. CRM or data warehouse needs point to Optima Insights.",
+    q:"Does the planning model need payroll or HRIS data beyond the GL export?",
+    context:"For Desktop clients all data enters via Excel import, so both Fathom and Jirav are viable. Jirav CE is needed only if payroll data must feed the model or if full per-client layout customization is required.",
     choices:[
-      {label:"No — GL data export is sufficient for the model", next:"planning_depth", tier:"gold"},
-      {label:"Yes — payroll or HRIS data will also be imported", next:"planning_depth", tier:"gold"},
+      {label:"No — GL export is sufficient; payroll can be entered manually if needed", next:"planning_depth", tier:"silver"},
+      {label:"Yes — payroll or HRIS data will also be imported", next:"gold_tier", tier:"gold"},
       {label:"Yes — also need CRM or data warehouse data", next:"result_plat", tier:"plat"}
     ]
   },
 
   // ── Planning depth (shared) ───────────────────────────────────────────────
   planning_depth:{
-    q:"How complex is the planning work this client needs?",
-    context:"This is the key split between Gold (Jirav CE) and Gold+ (Jirav CFO Enterprise). Both run on the same platform — CE can upgrade to CFO Enterprise at any time with no migration.",
+    q:"What level of planning complexity does this client need?",
+    context:"Fathom (Silver) now includes driver-based forecasting and a fully interconnected 3-statement model. The split to Gold or Gold+ is now driven by payroll integration, scenario depth, and departmental planning — not forecasting complexity alone.",
     choices:[
-      {label:"Budget vs. actual + AI-assisted rolling forecast — structured but not complex", next:"gold_tier", tier:"gold"},
-      {label:"Multi-scenario modeling, driver-based forecasts, or board/investor packages", next:"goldp_tier", tier:"goldp"},
-      {label:"Not sure yet — start simple, can grow later", next:"gold_tier", tier:"gold"}
+      {label:"Budget vs. actual + driver-based forecast — no payroll integration needed", next:"silver_or_gold", tier:"silver"},
+      {label:"Payroll or HRIS data needs to feed the forecast (Gusto, ADP, BambooHR, Paylocity)", next:"gold_tier", tier:"gold"},
+      {label:"5-scenario planning, 7-year horizon, departmental bottoms-up budgets, or covenant tracking", next:"goldp_tier", tier:"goldp"},
+      {label:"Not sure yet — start simple, can grow later", next:"silver_or_gold", tier:"silver"}
+    ]
+  },
+
+  // ── Silver vs Gold check (when payroll not needed) ────────────────────────
+  silver_or_gold:{
+    q:"How important is full per-client customization of the report layout and structure?",
+    context:"Fathom offers a flexible branded template. Jirav CE allows fully custom sections, narrative blocks, and KPI tile arrangements per client — useful when each client's report looks meaningfully different.",
+    choices:[
+      {label:"Flexible branded template is sufficient — consistent structure across clients", next:"result_silver", tier:"silver"},
+      {label:"Each client needs a fully custom report structure and layout", next:"gold_tier", tier:"gold"}
     ]
   },
 
   // ── Tier checks ───────────────────────────────────────────────────────────
   gold_tier:{
-    q:"What is this client's approximate monthly service level with Optima?",
-    context:"Jirav CE is $50/mo to Optima and $100–120/mo to the client. This confirms the engagement economics before recommending the tool.",
+    q:"What is the approximate monthly budget for this client's engagement with Optima?",
+    context:"Jirav CE is $100–120/mo to the client. This confirms the engagement economics before recommending the tool.",
     choices:[
-      {label:"Under $1,000/mo", next:"gold_low"},
+      {label:"Under $1,000/mo", next:"gold_entity"},
       {label:"$1,000 – $2,500/mo", next:"gold_entity"},
       {label:"$2,500 – $5,000/mo", next:"gold_entity"},
       {label:"Over $5,000/mo", next:"gold_entity"}
-    ]
-  },
-  gold_low:{
-    q:"Is this service level expected to grow, or is it likely to stay under $1,000/mo?",
-    choices:[
-      {label:"Growing — this engagement is expanding toward higher-complexity advisory", next:"gold_entity"},
-      {label:"Stable — this is the right scope for this client right now", next:"gold_entity"}
     ]
   },
   gold_entity:{
@@ -482,19 +489,12 @@ const NODES = {
   },
 
   goldp_tier:{
-    q:"What is this client's approximate monthly service level with Optima?",
-    context:"Jirav CFO Enterprise is $150/mo to Optima and $300–500/mo to the client. Best economics at $5,000+/mo engagements.",
+    q:"What is the approximate monthly budget for this client's engagement with Optima?",
+    context:"Jirav CFO Enterprise is $300–500/mo to the client. Best economics at $5,000+/mo engagements.",
     choices:[
-      {label:"Under $2,500/mo", next:"goldp_low"},
+      {label:"Under $2,500/mo", next:"gold_entity"},
       {label:"$2,500 – $5,000/mo", next:"result_goldp", tier:"goldp"},
       {label:"Over $5,000/mo", next:"result_goldp", tier:"goldp"}
-    ]
-  },
-  goldp_low:{
-    q:"Is this engagement expected to grow toward $5,000+/mo?",
-    choices:[
-      {label:"Growing — likely full CFO scope within 6–12 months", next:"result_goldp", tier:"goldp"},
-      {label:"Stable — this is the right scope for this client", next:"gold_entity"}
     ]
   },
 
