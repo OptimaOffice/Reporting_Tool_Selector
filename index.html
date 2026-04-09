@@ -423,10 +423,10 @@ const NODES = {
   // ── QBD ───────────────────────────────────────────────────────────────────
   qbd:{
     q:"Is this client expected to migrate to QBO, or staying on Desktop long-term?",
-    context:"All reporting tools in this stack use cloud accounting as their primary data source. Desktop clients require an Excel export workaround.",
+    context:"All reporting tools in this stack use cloud accounting as their primary data source. Desktop clients require an on-terminal WebConnect function.",
     choices:[
       {label:"Migrating to QBO — set up for the cloud environment now", next:"qbo_lower"},
-      {label:"Staying on Desktop — Excel import workaround is acceptable", next:"qbd_scope"}
+      {label:"Staying on Desktop — Reporting tool must run on same terminal as QB Desktop", next:"qbd_scope"}
     ]
   },
   qbd_scope:{
@@ -437,8 +437,8 @@ const NODES = {
     ]
   },
   qbd_plan_conn:{
-    q:"Does the planning model need payroll or HRIS data beyond the GL export?",
-    context:"For Desktop clients all data enters via Excel import, so both Fathom and Jirav are viable. Jirav CE is needed only if payroll data must feed the model or if full per-client layout customization is required.",
+    q:"Does the planning model need payroll or HRIS data?",
+    context:"For Desktop clients all data enters via QBD WebConnect, so both Fathom and Jirav are viable. Jirav CE is needed only if payroll data must feed the model or if full per-client layout customization is required.",
     choices:[
       {label:"No — GL export is sufficient; payroll can be entered manually if needed", next:"planning_depth", tier:"silver"},
       {label:"Yes — payroll or HRIS data will also be imported", next:"gold_tier", tier:"gold"},
